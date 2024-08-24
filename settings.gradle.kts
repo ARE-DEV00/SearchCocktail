@@ -21,3 +21,6 @@ dependencyResolutionManagement {
 
 rootProject.name = "SearchCocktail"
 include(":app")
+include(":domain")
+include(":feature:search")
+include(":data:remote-api-cocktail")
