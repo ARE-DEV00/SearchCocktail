@@ -1,4 +1,4 @@
-package kr.co.are.searchcocktail.remote_api_cocktail
+package kr.co.are.searchcocktail.data.remoteapicocktail
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -19,6 +19,6 @@ class ExampleInstrumentedTest {
     fun useAppContext() {
         // Context of the app under test.
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
-        assertEquals("kr.co.are.searchcocktail.remote_api_cocktail.test", appContext.packageName)
+        assertEquals("kr.co.are.searchcocktail.data.remoteapicocktail.test", appContext.packageName)
     }
 }

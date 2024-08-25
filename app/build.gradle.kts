@@ -12,7 +12,8 @@ val versionMinor = 0 // 0~99
 val versionPatch = 0 // 0~99
 val versionHotfix = 0 // 0~99
 
-val versionCodeFinal = versionMajor * 10_000_000 + versionMinor * 100_000 + versionPatch * 1000 + versionHotfix
+val versionCodeFinal =
+    versionMajor * 10_000_000 + versionMinor * 100_000 + versionPatch * 1000 + versionHotfix
 val versionNameFinal = "$versionMajor.$versionMinor.$versionPatch"
 
 
@@ -66,8 +67,8 @@ android {
 dependencies {
 
     implementation(project(":core:navigation"))
-
     implementation(project(":data:remote-api-cocktail"))
+
     implementation(project(":domain"))
     implementation(project(":feature:search"))
 

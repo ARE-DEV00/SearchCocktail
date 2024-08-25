@@ -23,5 +23,5 @@ rootProject.name = "SearchCocktail"
 include(":app")
 include(":domain")
 include(":feature:search")
-include(":data:remote-api-cocktail")
 include(":core:navigation")
+include(":data:remote-api-cocktail")
