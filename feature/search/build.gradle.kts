@@ -70,6 +70,9 @@ dependencies {
     //Navigation
     implementation(libs.navigation.compose)
 
+    //Coil
+    implementation(libs.coil.compose)
+
     //Logger
     implementation(libs.timber)
 

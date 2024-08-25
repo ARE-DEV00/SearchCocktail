@@ -1,24 +1,25 @@
 package kr.co.are.searchcocktail.feature.search.screen
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kr.co.are.searchcocktail.feature.search.component.DefaultCocktailListView
+import kr.co.are.searchcocktail.feature.search.component.SearchCocktailListView
 import kr.co.are.searchcocktail.feature.search.component.SearchTextField
 import kr.co.are.searchcocktail.feature.search.model.SearchUiState
 import timber.log.Timber
@@ -27,6 +28,7 @@ import timber.log.Timber
 fun SearchScreen(
     viewModel: SearchScreenViewModel = hiltViewModel()
 ) {
+    val focusManager = LocalFocusManager.current
     val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
     val searchUiState by viewModel.searchUiState.collectAsStateWithLifecycle()
 
@@ -34,6 +36,11 @@ fun SearchScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(color = Color(0xFFF0F0F0))
+            .pointerInput(Unit) {// 터치 시 키보드 숨기기
+                detectTapGestures(onTap = {
+                    focusManager.clearFocus()
+                })
+            }
     ) {
         Box(
             modifier = Modifier
@@ -43,12 +50,13 @@ fun SearchScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 SearchTextField(
+                    modifier = Modifier
+                        .weight(1f),
                     text = searchQuery,
                     hint = "검색어를 입력해주세요.",
                     onTextChanged = {
                         viewModel.updateSearchQuery(it)
-                    }, modifier = Modifier
-                        .weight(1f)
+                    }
                 )
 
                 /*Button(onClick = {}, modifier = Modifier.padding(5.dp)) {
@@ -57,23 +65,46 @@ fun SearchScreen(
             }
 
         }
-        when(val uiState = searchUiState){
+        when (val uiState = searchUiState) {
             is SearchUiState.Loading -> {
                 SearchLoading()
             }
+
             is SearchUiState.Error -> {
                 Timber.d("isNetwork : ${uiState.isNetwork}")
-                if(uiState.isNetwork){
+                if (uiState.isNetwork) {
                     SearchNetworkError()
-                }else{
+                } else {
                     SearchError()
                 }
             }
+
             is SearchUiState.Success -> {
-                if(uiState.isDefault){
-                    Text(text = "검색어 X")
-                }else{
-                    Text(text = "검색어 O")
+                if (uiState.isDefault) {
+                    if(uiState.drinks.isNotEmpty()){
+                        DefaultCocktailListView(
+                            itemList = uiState.drinks,
+                            onTabImage = { id ->
+                                Timber.d("onTabImage:$id")
+                            }
+                        )
+                    }else{
+                        DefaultEmptyList()
+                    }
+
+                } else {
+                    if (uiState.drinks.isNotEmpty()) {
+                        SearchCocktailListView(
+                            itemList = uiState.drinks,
+                            onTabFavorite = { id ->
+                                Timber.d("onTabFavorite:$id")
+                            },
+                            onTabItem = { id ->
+                                Timber.d("onTabItem:$id")
+                            })
+                    } else {
+                        SearchEmptyList()
+                    }
                 }
 
             }
@@ -99,5 +130,19 @@ private fun SearchError() {
 private fun SearchNetworkError() {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Text(text = "인터넷 연결을 확인해주세요.")
+    }
+}
+
+@Composable
+private fun SearchEmptyList() {
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        Text(text = "검색 결과가 없습니다.")
+    }
+}
+
+@Composable
+private fun DefaultEmptyList() {
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        Text(text = "칵테일 정보가 없습니다.")
     }
 }

@@ -12,12 +12,12 @@ import kr.co.are.searchcocktail.domain.model.ResultDomain
 import kr.co.are.searchcocktail.domain.repository.ApiCocktailRepository
 import javax.inject.Inject
 
-class GetFilterByAlcoholicUseCase @Inject constructor(
+class GetListCocktailFilterByAlcoholicUseCase @Inject constructor(
     private val apiCocktailRepository: ApiCocktailRepository
 ) {
     suspend operator fun invoke(): Flow<ResultDomain<List<DrinkInfoEntity>>> {
         return channelFlow {
-            apiCocktailRepository.getFilterByAlcoholic()
+            apiCocktailRepository.getListCocktailFilterByAlcoholic()
                 .catch { exception ->
                     send(ResultDomain.Error(exception, false))
                 }

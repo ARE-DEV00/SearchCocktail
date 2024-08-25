@@ -6,6 +6,8 @@ import kr.co.are.searchcocktail.domain.model.ResultData
 
 interface ApiCocktailRepository {
 
-    suspend fun getFilterByAlcoholic(): Flow<ResultData<List<DrinkInfoEntity>>>
+    suspend fun getListCocktailFilterByAlcoholic(): Flow<ResultData<List<DrinkInfoEntity>>>
+
+    suspend fun getListAllCocktailByFirstLetter(firstLetter:String): Flow<ResultData<List<DrinkInfoEntity>>>
 
 }
