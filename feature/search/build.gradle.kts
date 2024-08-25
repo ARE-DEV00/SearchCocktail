@@ -46,6 +46,7 @@ android {
 
 dependencies {
 
+    compileOnly(project(":core:build-config-stub"))
     implementation(project(":core:navigation"))
     implementation(project(":domain"))
 
@@ -65,9 +66,11 @@ dependencies {
     ksp(libs.hilt.android.compiler)
     implementation(libs.hilt.navigation.compose)
 
-
     //Navigation
     implementation(libs.navigation.compose)
+
+    //Logger
+    implementation(libs.timber)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
