@@ -3,30 +3,41 @@ package kr.co.are.searchcocktail.data.remoteapicocktail.repository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kr.co.are.searchcocktail.data.remoteapicocktail.ApiCocktailService
+import kr.co.are.searchcocktail.domain.entity.DrinkInfoEntity
+import kr.co.are.searchcocktail.domain.model.ResultData
 import kr.co.are.searchcocktail.domain.repository.ApiCocktailRepository
-import retrofit2.Retrofit
 import java.net.UnknownHostException
 import javax.inject.Inject
 
 class ApiCocktailRepositoryImpl @Inject constructor(
     private val apiCocktailService: ApiCocktailService,
-    private val retrofit: Retrofit,
-)  : ApiCocktailRepository {
-    override suspend fun getFilterByAlcoholic(): Flow<String> {
+) : ApiCocktailRepository {
+    override suspend fun getFilterByAlcoholic(): Flow<ResultData<List<DrinkInfoEntity>>> {
         return flow {
             try {
+                emit(ResultData.Loading)
                 val response = apiCocktailService.getFilterByAlcoholic()
-
-
                 if (response.isSuccessful) {
-                    emit(response.body().toString())
+                    val list = response.body()?.drinks
+                    if (list?.isNotEmpty() == true) {
+                        emit(ResultData.Success(list.map {
+                            DrinkInfoEntity(
+                                id = it.idDrink,
+                                name = it.strDrink,
+                                thumbUrl = it.strDrinkThumb,
+                            )
+                        }))
+                    } else {
+                        emit(ResultData.Success(emptyList()))
+                    }
+
                 } else {
+                    emit(ResultData.Error(Exception("API Error: ${response.message()}")))
                 }
             } catch (uhe: UnknownHostException) {
-                throw uhe
+                emit(ResultData.Error(uhe))
             } catch (t: Throwable) {
-                t.printStackTrace()
-                throw t
+                emit(ResultData.Error(t))
             }
         }
     }

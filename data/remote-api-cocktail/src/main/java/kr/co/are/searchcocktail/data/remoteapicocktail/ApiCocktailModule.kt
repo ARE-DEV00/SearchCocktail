@@ -91,8 +91,7 @@ object ApiCocktailModule {
     @Provides
     fun provideMainRepository(
         @Named("CocktailApiService") apiService: ApiCocktailService,
-        @Named("CocktailRetrofit") retrofit: Retrofit
     ): ApiCocktailRepository =
-        ApiCocktailRepositoryImpl(apiService, retrofit)
+        ApiCocktailRepositoryImpl(apiService)
 }
 
