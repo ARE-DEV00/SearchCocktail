@@ -65,6 +65,9 @@ android {
 
 dependencies {
 
+    implementation(project(":core:navigation"))
+
+    implementation(project(":data:remote-api-cocktail"))
     implementation(project(":domain"))
     implementation(project(":feature:search"))
 

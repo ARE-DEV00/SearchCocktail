@@ -7,6 +7,7 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
+import kr.co.are.searchcocktail.core.navigation.Route
 import kr.co.are.searchcocktail.feature.search.navigation.searchNavGraph
 
 
@@ -19,7 +20,7 @@ fun AppNavigation() {
         animationSpec = tween(300)
     )
 
-    NavHost(navController = navController, startDestination = "search",
+    NavHost(navController = navController, startDestination = Route.Search.path,
         enterTransition = { slideInOut },
         popEnterTransition = { slideInOut }) {
         searchNavGraph()
