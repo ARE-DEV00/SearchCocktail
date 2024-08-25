@@ -90,6 +90,14 @@ dependencies {
     //Navigation
     implementation(libs.navigation.compose)
 
+    //Retrofit
+    implementation(libs.retrofit2)
+    implementation(libs.retrofit2.moshi)
+    implementation(libs.retrofit2.adapter.rxjava3)
+    implementation(libs.moshi.kotlin)
+    implementation(libs.okhttp.logging.interceptor)
+    implementation(libs.okhttp)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

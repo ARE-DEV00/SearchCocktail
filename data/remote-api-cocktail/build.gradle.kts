@@ -1,6 +1,8 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
+    alias(libs.plugins.hilt.android)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -33,7 +35,22 @@ android {
 
 dependencies {
 
+    implementation(project(":domain"))
+
     implementation(libs.androidx.core.ktx)
+
+    //Hilt
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.android.compiler)
+
+    //Retrofit
+    implementation(libs.retrofit2)
+    implementation(libs.retrofit2.moshi)
+    implementation(libs.retrofit2.adapter.rxjava3)
+    implementation(libs.moshi.kotlin)
+    implementation(libs.okhttp.logging.interceptor)
+    implementation(libs.okhttp)
+
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
