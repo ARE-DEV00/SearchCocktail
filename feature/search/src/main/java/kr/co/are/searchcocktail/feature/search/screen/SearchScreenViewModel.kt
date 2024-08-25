@@ -4,6 +4,8 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -16,14 +18,22 @@ class SearchScreenViewModel @Inject constructor(
     private val getFilterByAlcoholicUseCase: GetFilterByAlcoholicUseCase
 ) : ViewModel() {
 
+    private val _searchQuery = MutableStateFlow("")
+    val searchQuery: StateFlow<String> = _searchQuery
+
     init {
         viewModelScope.launch {
-            getFilterByAlcoholicUseCase().catch {
-                Timber.e(it)
-            }.collectLatest {
-                Timber.d("##### getFilterByAlcoholicUseCase - $it")
-            }
+            getFilterByAlcoholicUseCase()
+                .catch {
+                    Timber.e(it)
+                }.collectLatest {
+                    Timber.d("##### getFilterByAlcoholicUseCase - $it")
+                }
         }
+    }
+
+    fun updateSearchQuery(query: String) {
+        _searchQuery.value = query
     }
 
 }
