@@ -25,6 +25,7 @@ retrofitAdapterRxjava3 = "2.9.0"
 moshiKotlin = "1.14.0"
 
 kotlinxCoroutinesCore = "1.9.0-RC"
+lifecycleRuntimeComposeAndroid = "2.8.4"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -65,6 +66,7 @@ kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-cor
 
 #Logger
 timber = { group = "com.jakewharton.timber", name = "timber", version.ref = "timber" }
+androidx-lifecycle-runtime-compose-android = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose-android", version.ref = "lifecycleRuntimeComposeAndroid" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

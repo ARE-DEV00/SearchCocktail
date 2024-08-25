@@ -19,16 +19,18 @@ class GetFilterByAlcoholicUseCase @Inject constructor(
         return channelFlow {
             apiCocktailRepository.getFilterByAlcoholic()
                 .catch { exception ->
-                    send(ResultDomain.Error(exception))
+                    send(ResultDomain.Error(exception, false))
                 }
-                .collectLatest { result ->
-                    when (result) {
+                .collectLatest { resultData ->
+                    when (resultData) {
                         is ResultData.Success -> {
-                            send(ResultDomain.Success(result.data))
+                            send(ResultDomain.Success(resultData.data))
                         }
+
                         is ResultData.Error -> {
-                            send(ResultDomain.Error(result.exception))
+                            send(ResultDomain.Error(resultData.exception, resultData.isNetwork))
                         }
+
                         is ResultData.Loading -> {
                             send(ResultDomain.Loading)
                         }

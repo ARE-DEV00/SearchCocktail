@@ -32,12 +32,12 @@ class ApiCocktailRepositoryImpl @Inject constructor(
                     }
 
                 } else {
-                    emit(ResultData.Error(Exception("API Error: ${response.message()}")))
+                    emit(ResultData.Error(Exception("API Error: ${response.message()}"), false))
                 }
             } catch (uhe: UnknownHostException) {
-                emit(ResultData.Error(uhe))
+                emit(ResultData.Error(uhe, true))
             } catch (t: Throwable) {
-                emit(ResultData.Error(t))
+                emit(ResultData.Error(t, false))
             }
         }
     }
