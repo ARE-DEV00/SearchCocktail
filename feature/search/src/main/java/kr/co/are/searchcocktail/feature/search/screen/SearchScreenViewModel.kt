@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kr.co.are.searchcocktail.domain.usecase.GetFilterByAlcoholicUseCase
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -18,9 +19,9 @@ class SearchScreenViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             getFilterByAlcoholicUseCase().catch {
-                Log.e("SearchScreenViewModel", "##### getApiCocktailListUseCase - $it")
+                Timber.e(it)
             }.collectLatest {
-                Log.d("SearchScreenViewModel", "##### getApiCocktailListUseCase - $it")
+                Timber.d("##### getFilterByAlcoholicUseCase - $it")
             }
         }
     }
