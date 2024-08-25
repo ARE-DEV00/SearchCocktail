@@ -1,4 +1,4 @@
-package kr.co.are.searchcocktail.remote_api_cocktail
+package kr.co.are.searchcocktail.data.remoteapicocktail
 
 import org.junit.Test
 

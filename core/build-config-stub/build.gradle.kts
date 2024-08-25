@@ -17,7 +17,7 @@ android {
     buildFeatures { buildConfig = true }
 
     defaultConfig {
-        buildConfigField("String", "BASE_API_URL_COCKTAIL", "\"https://www.thecocktaildb.com/api/json/v1/1/\"")
+        buildConfigField("String", "BASE_API_URL_COCKTAIL", "\"https://www.thecocktaildb.com/api/json/\"")
     }
 
     compileOptions {

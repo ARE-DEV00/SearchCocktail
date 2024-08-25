@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "kr.co.are.searchcocktail.remote_api_cocktail"
+    namespace = "kr.co.are.searchcocktail.data.remoteapicocktail"
     compileSdk = 34
 
     defaultConfig {
@@ -35,6 +35,8 @@ android {
 
 dependencies {
 
+    implementation(project(":domain"))
+
     compileOnly(project(":core:build-config-stub"))
 
     implementation(libs.androidx.core.ktx)
@@ -49,6 +51,15 @@ dependencies {
     //Hilt
     implementation(libs.hilt.android)
     ksp(libs.hilt.android.compiler)
+
+    //Retrofit
+    implementation(libs.retrofit2)
+    implementation(libs.retrofit2.moshi)
+    implementation(libs.retrofit2.adapter.rxjava3)
+    implementation(libs.moshi.kotlin)
+    implementation(libs.okhttp.logging.interceptor)
+    implementation(libs.okhttp)
+
 
     //Logger
     implementation(libs.timber)

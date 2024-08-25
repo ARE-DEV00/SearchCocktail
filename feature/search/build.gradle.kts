@@ -48,6 +48,7 @@ dependencies {
 
     compileOnly(project(":core:build-config-stub"))
     implementation(project(":core:navigation"))
+    implementation(project(":domain"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -57,6 +58,7 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.lifecycle.runtime.compose.android)
 
 
     //Hilt
@@ -67,6 +69,9 @@ dependencies {
 
     //Navigation
     implementation(libs.navigation.compose)
+
+    //Coil
+    implementation(libs.coil.compose)
 
     //Logger
     implementation(libs.timber)
