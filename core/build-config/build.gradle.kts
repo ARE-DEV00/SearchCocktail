@@ -16,9 +16,14 @@ android {
     buildTypes {
         debug {
             buildConfigField("String", "BASE_API_URL_COCKTAIL", "\"https://www.thecocktaildb.com/api/json/\"")
+            buildConfigField("String", "BASE_API_URL_STREAM_TEXT", "\"https://api.push-knock.com/\"")
+            buildConfigField("String", "KEY_STREAM_TEXT_API_KEY", "\"${project.findProperty("KEY_STREAM_TEXT_API_KEY")}\"")
+
         }
         release {
             buildConfigField("String", "BASE_API_URL_COCKTAIL", "\"https://www.thecocktaildb.com/api/json/\"")
+            buildConfigField("String", "BASE_API_URL_STREAM_TEXT", "\"https://api.push-knock.com/\"")
+            buildConfigField("String", "KEY_STREAM_TEXT_API_KEY", "\"${project.findProperty("KEY_STREAM_TEXT_API_KEY")}\"")
         }
     }
 
