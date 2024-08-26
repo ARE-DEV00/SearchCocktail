@@ -2,7 +2,9 @@ package kr.co.are.searchcocktail.core.youtubeplayer.component
 
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -15,6 +17,7 @@ fun YoutubePlayer(
     modifier: Modifier,
     bridgeName:String,
     videoId: String,
+    height:String = "250",
     onPlayTimeUpdated: (Int) -> Unit
 ) {
     val webView = WebView(LocalContext.current).apply {
@@ -25,22 +28,25 @@ fun YoutubePlayer(
         addJavascriptInterface(WebViewYoutubePlayerBridge(onPlayTimeUpdated), bridgeName)
     }
 
-    val htmlData = getHtmlYoutube(bridgeName, videoId)
-    AndroidView(
-        modifier = modifier.fillMaxWidth().fillMaxHeight(),
-        factory = { webView }) { view ->
-        view.loadDataWithBaseURL(
-            "https://www.youtube.com",
-            htmlData,
-            "text/html",
-            "UTF-8",
-            null
-        )
+    val htmlData = getHtmlYoutube(bridgeName, videoId, height)
+    Box(modifier = modifier.fillMaxSize()) {
+        AndroidView(
+            modifier = modifier.fillMaxSize(),
+            factory = { webView }) { view ->
+            view.loadDataWithBaseURL(
+                "https://www.youtube.com",
+                htmlData,
+                "text/html",
+                "UTF-8",
+                null
+            )
+        }
     }
+
 
 }
 
-fun getHtmlYoutube(bridgeName: String, videoId: String): String {
+fun getHtmlYoutube(bridgeName: String, videoId: String, height:String): String {
     return """
         <!DOCTYPE html>
             <html>
@@ -49,10 +55,6 @@ fun getHtmlYoutube(bridgeName: String, videoId: String): String {
                 body {
                   margin: 0;
                   padding: 0;
-                }
-                #player {
-                  width: 100%;
-                  height: 100%;
                 }
                 </style>
               <body>
@@ -69,7 +71,7 @@ fun getHtmlYoutube(bridgeName: String, videoId: String): String {
             
                   function onYouTubeIframeAPIReady() {
                     player = new YT.Player('player', {
-                      height: '100%',
+                      height: '${height}',
                       width: '100%',
                       videoId: '${videoId}',
                       events: {
