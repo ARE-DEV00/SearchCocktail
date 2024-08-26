@@ -1,5 +1,6 @@
 package kr.co.are.searchcocktail.feature.search.component
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -31,7 +32,9 @@ fun DefaultCocktailListView(
         items(
             itemList.size,
         ) { item ->
-            Box {
+            Box(
+                modifier = Modifier.clickable { onTabImage(itemList[item].id) },
+            ) {
                 AsyncImage(
                     model = itemList[item].thumbUrl,
                     contentDescription = null,

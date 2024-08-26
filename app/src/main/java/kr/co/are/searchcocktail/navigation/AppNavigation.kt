@@ -9,6 +9,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import kr.co.are.searchcocktail.core.navigation.Route
 import kr.co.are.searchcocktail.feature.search.navigation.searchNavGraph
+import kr.co.are.searchcocktail.feature.streamtext.navigation.navigateStreamText
+import kr.co.are.searchcocktail.feature.streamtext.navigation.streamTextNavGraph
+import timber.log.Timber
 
 
 @Composable
@@ -23,8 +26,12 @@ fun AppNavigation() {
     NavHost(navController = navController, startDestination = Route.Search.path,
         enterTransition = { slideInOut },
         popEnterTransition = { slideInOut }) {
-        searchNavGraph()
 
+        searchNavGraph(onTabItem = {
+            Timber.d("onTabItem: $it")
+        })
+
+        streamTextNavGraph()
 
     }
 }

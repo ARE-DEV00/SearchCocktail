@@ -67,6 +67,7 @@ fun SearchCocktailListView(
                 IconButton(onClick = {
                     isFavorite = !isFavorite
                     onTabFavorite(itemList[item].id)
+                    onTabItem(itemList[item].id)
                 }) {
                     Icon(
                         imageVector = if (isFavorite) {

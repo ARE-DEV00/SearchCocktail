@@ -26,7 +26,8 @@ import timber.log.Timber
 
 @Composable
 fun SearchScreen(
-    viewModel: SearchScreenViewModel = hiltViewModel()
+    viewModel: SearchScreenViewModel = hiltViewModel(),
+    onTabItem: (id: String) -> Unit
 ) {
     val focusManager = LocalFocusManager.current
     val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
@@ -86,6 +87,7 @@ fun SearchScreen(
                             itemList = uiState.drinks,
                             onTabImage = { id ->
                                 Timber.d("onTabImage:$id")
+                                onTabItem(id)
                             }
                         )
                     }else{
@@ -101,6 +103,7 @@ fun SearchScreen(
                             },
                             onTabItem = { id ->
                                 Timber.d("onTabItem:$id")
+                                onTabItem(id)
                             })
                     } else {
                         SearchEmptyList()
