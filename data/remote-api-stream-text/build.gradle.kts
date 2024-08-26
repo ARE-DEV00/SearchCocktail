@@ -1,48 +1,20 @@
 plugins {
-    alias(libs.plugins.android.application)
+    alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.hilt.android)
     alias(libs.plugins.ksp)
-    alias(libs.plugins.compose.compiler)
-
 }
 
-val versionMajor = 1 // 0~9
-val versionMinor = 0 // 0~99
-val versionPatch = 0 // 0~99
-val versionHotfix = 0 // 0~99
-
-val versionCodeFinal =
-    versionMajor * 10_000_000 + versionMinor * 100_000 + versionPatch * 1000 + versionHotfix
-val versionNameFinal = "$versionMajor.$versionMinor.$versionPatch"
-
-
-
 android {
-    namespace = "kr.co.are.searchcocktail"
+    namespace = "kr.co.are.searchcocktail.data.remoteapistreamtext"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "kr.co.are.searchcocktail"
         minSdk = 24
-        targetSdk = 34
-        versionCode = versionCodeFinal
-        versionName = versionNameFinal
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        vectorDrawables {
-            useSupportLibrary = true
-        }
     }
 
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -52,7 +24,6 @@ android {
             )
         }
     }
-
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
@@ -60,28 +31,12 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
-    buildFeatures {
-        compose = true
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "2.0.0"
-    }
-    packaging {
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
-    }
 }
 
 dependencies {
-    implementation(project(":core:build-config"))
-    implementation(project(":core:navigation"))
-
-    implementation(project(":data:remote-api-cocktail"))
-    implementation(project(":data:remote-api-stream-text"))
-
     implementation(project(":domain"))
-    implementation(project(":feature:search"))
+
+    compileOnly(project(":core:build-config-stub"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -94,12 +49,7 @@ dependencies {
 
     //Hilt
     implementation(libs.hilt.android)
-    implementation(libs.androidx.navigation.runtime.ktx)
     ksp(libs.hilt.android.compiler)
-    implementation(libs.hilt.navigation.compose)
-
-    //Navigation
-    implementation(libs.navigation.compose)
 
     //Retrofit
     implementation(libs.retrofit2)
@@ -108,6 +58,7 @@ dependencies {
     implementation(libs.moshi.kotlin)
     implementation(libs.okhttp.logging.interceptor)
     implementation(libs.okhttp)
+
 
     //Logger
     implementation(libs.timber)
