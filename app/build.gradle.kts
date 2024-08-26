@@ -24,7 +24,7 @@ android {
 
     defaultConfig {
         applicationId = "kr.co.are.searchcocktail"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 34
         versionCode = versionCodeFinal
         versionName = versionNameFinal
