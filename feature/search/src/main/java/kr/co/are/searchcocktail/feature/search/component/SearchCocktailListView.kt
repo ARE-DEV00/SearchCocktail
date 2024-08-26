@@ -23,7 +23,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import kr.co.are.searchcocktail.domain.entity.DrinkInfoEntity
+import kr.co.are.searchcocktail.domain.entity.drink.DrinkInfoEntity
 
 @Composable
 fun SearchCocktailListView(

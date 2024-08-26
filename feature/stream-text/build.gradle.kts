@@ -38,6 +38,8 @@ dependencies {
 
     compileOnly(project(":core:build-config-stub"))
     implementation(project(":core:navigation"))
+    implementation(project(":core:youtube-player"))
+
     implementation(project(":domain"))
 
     implementation(libs.androidx.core.ktx)

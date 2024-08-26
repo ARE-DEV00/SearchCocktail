@@ -1,16 +1,18 @@
 package kr.co.are.searchcocktail.domain.usecase
 
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flowOn
-import kr.co.are.searchcocktail.domain.entity.DrinkInfoEntity
-import kr.co.are.searchcocktail.domain.entity.StreamTextInfoEntity
+import kr.co.are.searchcocktail.domain.entity.streamtext.LexicalEntity
+import kr.co.are.searchcocktail.domain.entity.streamtext.StreamTextInfoEntity
+import kr.co.are.searchcocktail.domain.model.ParagraphChildAdapter
 import kr.co.are.searchcocktail.domain.model.ResultData
 import kr.co.are.searchcocktail.domain.model.ResultDomain
-import kr.co.are.searchcocktail.domain.repository.ApiCocktailRepository
 import kr.co.are.searchcocktail.domain.repository.ApiStreamTextRepository
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
@@ -40,7 +42,18 @@ class GetStreamTextByIdUseCase @Inject constructor(
                              * 3. Json 파싱
                              * ***/
                             if(resultData.data?.streamText != null){
-                                decodeStreamText(resultData.data.streamText)
+                                val json = decodeStreamText(resultData.data.streamText)
+                                val moshi = Moshi.Builder()
+                                    .add(ParagraphChildAdapter())
+                                    .add(KotlinJsonAdapterFactory())
+                                    .build()
+
+                                val jsonAdapter = moshi.adapter(LexicalEntity::class.java)
+
+                                val lexicalJsonObj = jsonAdapter.fromJson(json)
+
+                                println(lexicalJsonObj)
+                                resultData.data.lexicalEntity = lexicalJsonObj
                             }
                             send(ResultDomain.Success(resultData.data))
                         }
@@ -58,11 +71,14 @@ class GetStreamTextByIdUseCase @Inject constructor(
         }.flowOn(Dispatchers.IO)
     }
 
-    private fun decodeStreamText(encodedString: String) {
+    private fun decodeStreamText(encodedString: String):String {
         val decompressedBytes = decompressZlib(Base64.getDecoder().decode(encodedString)) // Base64 Decode & zlib 압축 해제
         if(decompressedBytes!= null){
             val resultString = String(decompressedBytes, Charsets.UTF_8) // ByteArray를 String으로 변환
             println(resultString)
+            return resultString
+        }else{
+            return ""
         }
     }
 

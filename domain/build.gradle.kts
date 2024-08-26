@@ -14,4 +14,7 @@ dependencies{
     //Dagger
     implementation(libs.dagger)
 
+    //Moshi - Json Parser
+    implementation(libs.moshi.kotlin)
+
 }

@@ -3,8 +3,7 @@ package kr.co.are.searchcocktail.data.remoteapistreamtext.repository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kr.co.are.searchcocktail.data.remoteapistreamtext.ApiStreamTextService
-import kr.co.are.searchcocktail.domain.entity.DrinkInfoEntity
-import kr.co.are.searchcocktail.domain.entity.StreamTextInfoEntity
+import kr.co.are.searchcocktail.domain.entity.streamtext.StreamTextInfoEntity
 import kr.co.are.searchcocktail.domain.model.ResultData
 import kr.co.are.searchcocktail.domain.repository.ApiStreamTextRepository
 import java.net.UnknownHostException

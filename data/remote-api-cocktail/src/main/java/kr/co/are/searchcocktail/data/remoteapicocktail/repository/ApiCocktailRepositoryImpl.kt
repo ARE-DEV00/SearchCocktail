@@ -3,10 +3,9 @@ package kr.co.are.searchcocktail.data.remoteapicocktail.repository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kr.co.are.searchcocktail.data.remoteapicocktail.ApiCocktailService
-import kr.co.are.searchcocktail.domain.entity.DrinkInfoEntity
+import kr.co.are.searchcocktail.domain.entity.drink.DrinkInfoEntity
 import kr.co.are.searchcocktail.domain.model.ResultData
 import kr.co.are.searchcocktail.domain.repository.ApiCocktailRepository
-import timber.log.Timber
 import java.io.EOFException
 import java.net.UnknownHostException
 import javax.inject.Inject
