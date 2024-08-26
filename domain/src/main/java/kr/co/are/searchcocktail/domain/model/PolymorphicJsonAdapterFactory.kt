@@ -15,7 +15,7 @@ class ParagraphChildAdapter {
                 time = (json["time"] as Number).toDouble(),
                 type = type
             )
-            "karaoke" -> ParagraphChildEntity.Karaoke(
+            "karaoke" -> ParagraphChildEntity.KaraokeEntity(
                 text = json["text"] as String,
                 type = type,
                 s = (json["s"] as Number).toDouble(),
@@ -33,7 +33,7 @@ class ParagraphChildAdapter {
                 "time" to paragraphChild.time,
                 "type" to paragraphChild.type
             )
-            is ParagraphChildEntity.Karaoke -> mapOf(
+            is ParagraphChildEntity.KaraokeEntity -> mapOf(
                 "text" to paragraphChild.text,
                 "type" to paragraphChild.type,
                 "s" to paragraphChild.s,

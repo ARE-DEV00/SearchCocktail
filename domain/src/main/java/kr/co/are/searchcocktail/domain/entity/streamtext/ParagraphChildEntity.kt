@@ -11,7 +11,7 @@ sealed class ParagraphChildEntity {
     ) : ParagraphChildEntity()
 
     @JsonClass(generateAdapter = true)
-    data class Karaoke(
+    data class KaraokeEntity(
         val text: String,
         val type: String, // "karaoke"
         val s: Double,

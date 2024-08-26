@@ -4,10 +4,10 @@ import android.webkit.JavascriptInterface
 import timber.log.Timber
 
 class WebViewYoutubePlayerBridge(
-    private val onUpdatedYoutubePlayTime: (Int) -> Unit
+    private val onUpdatedYoutubePlayTime: (Float) -> Unit
 ) {
     @JavascriptInterface
-    fun onUpdatedPlayTime(time:Int) {
+    fun onUpdatedPlayTime(time:Float) {
         onUpdatedYoutubePlayTime(time)
     }
 }

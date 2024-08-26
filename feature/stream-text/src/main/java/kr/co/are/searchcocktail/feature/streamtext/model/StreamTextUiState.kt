@@ -14,5 +14,5 @@ sealed interface StreamTextUiState {
     data class Error(val isNetwork: Boolean) : StreamTextUiState
 
     @Immutable
-    data class Success(val streamTextInfo: StreamTextInfoEntity?) : StreamTextUiState
+    data class Success(val streamTextInfo: StreamTextInfoEntity?, val playTime:Float) : StreamTextUiState
 }
