@@ -1,4 +1,4 @@
-package kr.co.are.searchcocktail.domain.entity
+package kr.co.are.searchcocktail.domain.entity.drink
 
 data class DrinkInfoEntity(
     val id: String,                         //ID

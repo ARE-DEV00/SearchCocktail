@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flowOn
-import kr.co.are.searchcocktail.domain.entity.DrinkInfoEntity
+import kr.co.are.searchcocktail.domain.entity.drink.DrinkInfoEntity
 import kr.co.are.searchcocktail.domain.model.ResultData
 import kr.co.are.searchcocktail.domain.model.ResultDomain
 import kr.co.are.searchcocktail.domain.repository.ApiCocktailRepository

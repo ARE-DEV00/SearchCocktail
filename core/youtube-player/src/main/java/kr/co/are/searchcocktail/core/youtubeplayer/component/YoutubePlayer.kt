@@ -18,7 +18,7 @@ fun YoutubePlayer(
     bridgeName:String,
     videoId: String,
     height:String = "250",
-    onPlayTimeUpdated: (Int) -> Unit
+    onPlayTimeUpdated: (Float) -> Unit
 ) {
     val webView = WebView(LocalContext.current).apply {
         settings.javaScriptEnabled = true
@@ -94,7 +94,7 @@ fun getHtmlYoutube(bridgeName: String, videoId: String, height:String): String {
                   }
             
                   function startUpdatingTime() {
-                    timeUpdater = setInterval(updateCurrentTime, 1000); // 1초마다 현재 재생 시간을 업데이트
+                    timeUpdater = setInterval(updateCurrentTime, 100); // 0.1초마다 현재 재생 시간을 업데이트
                   }
             
                   function stopUpdatingTime() {

@@ -1,9 +1,8 @@
 package kr.co.are.searchcocktail.feature.search.model
 
-import android.net.Network
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
-import kr.co.are.searchcocktail.domain.entity.DrinkInfoEntity
+import kr.co.are.searchcocktail.domain.entity.drink.DrinkInfoEntity
 
 @Stable
 sealed interface SearchUiState {
