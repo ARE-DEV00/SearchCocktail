@@ -18,6 +18,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kr.co.are.searchcocktail.domain.entity.drink.DrinkInfoEntity
 import kr.co.are.searchcocktail.feature.search.component.DefaultCocktailListView
 import kr.co.are.searchcocktail.feature.search.component.SearchCocktailListView
 import kr.co.are.searchcocktail.feature.search.component.SearchTextField
@@ -27,7 +28,7 @@ import timber.log.Timber
 @Composable
 fun SearchScreen(
     viewModel: SearchScreenViewModel = hiltViewModel(),
-    onTabItem: (id: String) -> Unit
+    onTabItem: (drinkInfo: String) -> Unit
 ) {
     val focusManager = LocalFocusManager.current
     val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
@@ -85,9 +86,9 @@ fun SearchScreen(
                     if(uiState.drinks.isNotEmpty()){
                         DefaultCocktailListView(
                             itemList = uiState.drinks,
-                            onTabImage = { id ->
-                                Timber.d("onTabImage:$id")
-                                onTabItem(id)
+                            onTabImage = { drinkInfo ->
+                                Timber.d("onTabImage:$drinkInfo")
+                                onTabItem(drinkInfo.id)
                             }
                         )
                     }else{
@@ -100,10 +101,11 @@ fun SearchScreen(
                             itemList = uiState.drinks,
                             onTabFavorite = { id ->
                                 Timber.d("onTabFavorite:$id")
+                                viewModel.updateFavorite(id)
                             },
-                            onTabItem = { id ->
-                                Timber.d("onTabItem:$id")
-                                onTabItem(id)
+                            onTabItem = { drinkInfo ->
+                                Timber.d("onTabItem:$drinkInfo")
+                                onTabItem(drinkInfo.id)
                             })
                     } else {
                         SearchEmptyList()

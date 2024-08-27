@@ -9,7 +9,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kr.co.are.searchcocktail.domain.entity.drink.DrinkInfoEntity
 import kr.co.are.searchcocktail.domain.model.ResultDomain
+import kr.co.are.searchcocktail.domain.usecase.AddFavoriteCocktailUseCase
+import kr.co.are.searchcocktail.domain.usecase.DeleteFavoriteCocktailByIdUseCase
 import kr.co.are.searchcocktail.domain.usecase.GetListCocktailByQueryUseCase
 import kr.co.are.searchcocktail.domain.usecase.GetListCocktailFilterByAlcoholicUseCase
 import kr.co.are.searchcocktail.feature.search.model.SearchUiState
@@ -20,6 +23,8 @@ import javax.inject.Inject
 class SearchScreenViewModel @Inject constructor(
     private val getListCocktailFilterByAlcoholicUseCase: GetListCocktailFilterByAlcoholicUseCase,
     private val getListCocktailByQueryUseCase: GetListCocktailByQueryUseCase,
+    private val addFavoriteCocktailUseCase: AddFavoriteCocktailUseCase,
+    private val deleteFavoriteCocktailByIdUseCase: DeleteFavoriteCocktailByIdUseCase
 ) : ViewModel() {
 
     private val _searchUiState = MutableStateFlow<SearchUiState>(SearchUiState.Loading)
@@ -93,4 +98,57 @@ class SearchScreenViewModel @Inject constructor(
         }
     }
 
+    fun updateFavorite(drinkInfo: DrinkInfoEntity) {
+        if (drinkInfo.isFavorite) {
+            deleteFavorite(drinkInfo)
+        } else {
+            addFavorite(drinkInfo)
+        }
+    }
+
+    private fun addFavorite(drinkInfo: DrinkInfoEntity) {
+        viewModelScope.launch {
+            addFavoriteCocktailUseCase(drinkInfo)
+                .catch {
+                    Timber.e(it)
+                }.collectLatest { resultDomain ->
+                    when (resultDomain) {
+                        is ResultDomain.Error -> {
+                            Timber.e(resultDomain.exception)
+                        }
+
+                        ResultDomain.Loading -> {
+                            Timber.d("Loading")
+                        }
+
+                        is ResultDomain.Success -> {
+                            Timber.d("Success")
+                        }
+                    }
+                }
+        }
+    }
+
+    private fun deleteFavorite(drinkInfo: DrinkInfoEntity) {
+        viewModelScope.launch {
+            deleteFavoriteCocktailByIdUseCase(drinkInfo)
+                .catch {
+                    Timber.e(it)
+                }.collectLatest { resultDomain ->
+                    when (resultDomain) {
+                        is ResultDomain.Error -> {
+                            Timber.e(resultDomain.exception)
+                        }
+
+                        ResultDomain.Loading -> {
+                            Timber.d("Loading")
+                        }
+
+                        is ResultDomain.Success -> {
+                            Timber.d("Success")
+                        }
+                    }
+                }
+        }
+    }
 }
