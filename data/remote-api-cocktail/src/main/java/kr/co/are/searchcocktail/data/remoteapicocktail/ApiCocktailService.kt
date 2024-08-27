@@ -1,5 +1,6 @@
 package kr.co.are.searchcocktail.data.remoteapicocktail
 
+import kr.co.are.searchcocktail.data.remoteapicocktail.model.response.GetCocktailByIdResponse
 import kr.co.are.searchcocktail.data.remoteapicocktail.model.response.GetFilterByAlcoholicResponse
 import kr.co.are.searchcocktail.data.remoteapicocktail.model.response.GetListAllCocktailByFirstLetterResponse
 import retrofit2.Response
@@ -20,5 +21,12 @@ interface ApiCocktailService {
         @Path("api-key") apiKey: String = "1",
         @Query("f") firstLetter: String,
     ): Response<GetListAllCocktailByFirstLetterResponse>
+
+    @GET("v1/{api-key}/lookup.php")
+    suspend fun getCocktailById(
+        @Path("api-key") apiKey: String = "1",
+        @Query("i") id: String,
+    ): Response<GetCocktailByIdResponse>
+
 
 }

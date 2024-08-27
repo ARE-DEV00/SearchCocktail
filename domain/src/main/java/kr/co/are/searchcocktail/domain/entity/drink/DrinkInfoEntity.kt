@@ -14,6 +14,7 @@ data class DrinkInfoEntity(
     val instructions: String? = null,       //영어(English)
     val ingredientsEs: String? = null,      //스페인어(Spanish)
     val ingredientsDe: String? = null,      //독일어(German)
+    val ingredientsFr: String? = null,      //프랑스어(French)
     val ingredientsIt: String? = null,      //이탈리아어(Italian)
     val ingredientsZhHans: String? = null,  //중국어 간체(Chinese)
     val ingredientsZhHant: String? = null,  //중국어 번체(Chinese)
