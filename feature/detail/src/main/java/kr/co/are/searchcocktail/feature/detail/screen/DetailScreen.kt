@@ -15,10 +15,10 @@ import kr.co.are.searchcocktail.feature.detail.model.DetailUiState
 @Composable
 fun DetailScreen(
     viewModel: DetailViewModel = hiltViewModel(),
-    id: String,
+    id: String? = null,
 ) {
     viewModel.loadCocktailById(id = id)
-    
+
     val detailUiState by viewModel.detailUiState.collectAsStateWithLifecycle()
 
     when (val uiState = detailUiState) {

@@ -19,7 +19,9 @@ class DetailViewModel @Inject constructor(
     private val _detailUiState = MutableStateFlow<DetailUiState>(DetailUiState.Loading)
     val detailUiState = _detailUiState.asStateFlow()
 
-    fun loadCocktailById(id: String) {
+    fun loadCocktailById(id: String?) {
+        if(id == null) return
+
         viewModelScope.launch {
             getCocktailByIdUseCase(id)
                 .collect { resultDomain ->
