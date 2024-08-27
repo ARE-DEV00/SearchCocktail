@@ -14,13 +14,14 @@ import kr.co.are.searchcocktail.feature.detail.model.DetailUiState
 
 @Composable
 fun DetailScreen(
-    viewModel: DetailViewModel = hiltViewModel()
+    viewModel: DetailViewModel = hiltViewModel(),
+    id: String,
 ) {
-    val streamTextUiState by viewModel.detailUiState.collectAsStateWithLifecycle()
+    viewModel.loadCocktailById(id = id)
+    
+    val detailUiState by viewModel.detailUiState.collectAsStateWithLifecycle()
 
-
-
-    when (val uiState = streamTextUiState) {
+    when (val uiState = detailUiState) {
         is DetailUiState.Loading -> {
             DetailLoading()
         }

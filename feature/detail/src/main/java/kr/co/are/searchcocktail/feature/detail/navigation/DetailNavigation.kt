@@ -11,8 +11,9 @@ fun NavController.navigateSearch() {
 }
 
 fun NavGraphBuilder.searchNavGraph(
+    id: String
 ) {
     composable(route = Route.Detail.path) {
-        DetailScreen()
+        DetailScreen(id = id)
     }
 }

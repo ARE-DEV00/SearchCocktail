@@ -14,5 +14,5 @@ sealed interface DetailUiState {
     data class Error(val isNetwork: Boolean) : DetailUiState
 
     @Immutable
-    data class Success(val drinkInfo: DrinkInfoEntity, val isDefault: Boolean) : DetailUiState
+    data class Success(val drinkInfo: DrinkInfoEntity) : DetailUiState
 }
