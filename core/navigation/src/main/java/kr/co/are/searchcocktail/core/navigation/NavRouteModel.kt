@@ -8,6 +8,10 @@ sealed interface Route {
         override val path: String = "search"
     }
 
+    data object Detail : Route {
+        override val path: String = "detail"
+    }
+
     data object StreamText : Route {
         override val path: String = "streamText"
     }
