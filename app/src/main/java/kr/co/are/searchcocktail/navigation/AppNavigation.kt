@@ -29,13 +29,13 @@ fun AppNavigation() {
         popEnterTransition = { slideInOut }) {
 
         searchNavGraph(onTabItem = {
-            Timber.d("onTabItem: $it")
+            Timber.d("### onTabItem: $it")
             navController.navigateDetail(it)
         })
 
         streamTextNavGraph()
 
-        detailNavGraph()
+        detailNavGraph(navController)
 
     }
 }
