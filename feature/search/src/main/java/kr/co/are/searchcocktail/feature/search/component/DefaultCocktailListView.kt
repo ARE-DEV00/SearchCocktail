@@ -24,7 +24,7 @@ import kr.co.are.searchcocktail.domain.entity.drink.DrinkInfoEntity
 @Composable
 fun DefaultCocktailListView(
     itemList: List<DrinkInfoEntity>,
-    onTabImage: (id: String) -> Unit
+    onTabImage: (id: DrinkInfoEntity) -> Unit
 ) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(3),
@@ -32,8 +32,9 @@ fun DefaultCocktailListView(
         items(
             itemList.size,
         ) { item ->
+            val drinkInfo = itemList[item]
             Box(
-                modifier = Modifier.clickable { onTabImage(itemList[item].id) },
+                modifier = Modifier.clickable { onTabImage(drinkInfo) },
             ) {
                 AsyncImage(
                     model = itemList[item].thumbUrl,

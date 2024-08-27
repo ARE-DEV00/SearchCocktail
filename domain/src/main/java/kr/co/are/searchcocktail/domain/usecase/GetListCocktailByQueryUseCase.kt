@@ -10,12 +10,16 @@ import kr.co.are.searchcocktail.domain.entity.drink.DrinkInfoEntity
 import kr.co.are.searchcocktail.domain.model.ResultData
 import kr.co.are.searchcocktail.domain.model.ResultDomain
 import kr.co.are.searchcocktail.domain.repository.ApiCocktailRepository
+import kr.co.are.searchcocktail.domain.repository.DatabaseCocktailRepository
 import javax.inject.Inject
 
 class GetListCocktailByQueryUseCase @Inject constructor(
-    private val apiCocktailRepository: ApiCocktailRepository
+    private val apiCocktailRepository: ApiCocktailRepository,
+    private val databaseCocktailRepository: DatabaseCocktailRepository
 ) {
     private var searchCocktails: List<DrinkInfoEntity>? = null
+    private var favoriteCocktails: List<DrinkInfoEntity>? = null
+
     suspend operator fun invoke(
         query: String,
         isRefresh: Boolean
@@ -23,7 +27,34 @@ class GetListCocktailByQueryUseCase @Inject constructor(
         return channelFlow {
             if (isRefresh) {
                 searchCocktails = null
+                favoriteCocktails = null
             }
+
+            databaseCocktailRepository.getFavoriteDrinkInfoList()
+                .catch { exception ->
+                    send(ResultDomain.Error(exception, false))
+                }
+                .collectLatest { resultData ->
+                    when (resultData) {
+                        is ResultData.Success -> {
+                            favoriteCocktails = resultData.data
+                        }
+
+                        is ResultData.Error -> {
+                            send(
+                                ResultDomain.Error(
+                                    resultData.exception,
+                                    resultData.isNetwork
+                                )
+                            )
+                        }
+
+                        ResultData.Loading -> {
+                            send(ResultDomain.Loading)
+                        }
+                    }
+                }
+
             println("#### searchCocktails: ${searchCocktails?.size}")
             if (query.isNotEmpty()) {
                 if (searchCocktails != null) {
@@ -46,7 +77,17 @@ class GetListCocktailByQueryUseCase @Inject constructor(
                         .collectLatest { resultData ->
                             when (resultData) {
                                 is ResultData.Success -> {
-                                    searchCocktails = resultData.data
+                                    searchCocktails = resultData.data.map {
+                                        val favoriteCocktail = favoriteCocktails?.find { favorite ->
+                                            favorite.id == it.id
+                                        }
+                                        if (favoriteCocktail != null) {
+                                            it.isFavorite = true
+                                            it
+                                        } else {
+                                            it
+                                        }
+                                    }
                                     send(ResultDomain.Success(resultData.data))
                                 }
 
@@ -69,6 +110,7 @@ class GetListCocktailByQueryUseCase @Inject constructor(
 
             } else {
                 searchCocktails = null
+                favoriteCocktails = null
             }
 
         }.flowOn(Dispatchers.IO)

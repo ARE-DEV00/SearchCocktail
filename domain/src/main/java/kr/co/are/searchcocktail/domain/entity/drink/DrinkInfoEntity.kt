@@ -8,7 +8,7 @@ data class DrinkInfoEntity(
     val alcoholic: String? = null,          //알코올 여부
     val glass: String? = null,              //잔
 
-    val isFavorite: Boolean = false,        //즐겨찾기 여부
+    var isFavorite: Boolean = false,        //즐겨찾기 여부
 
     //소개
     val instructions: String? = null,       //영어(English)

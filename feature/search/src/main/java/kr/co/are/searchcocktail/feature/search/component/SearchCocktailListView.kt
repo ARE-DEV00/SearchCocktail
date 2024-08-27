@@ -1,5 +1,6 @@
 package kr.co.are.searchcocktail.feature.search.component
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -28,19 +29,24 @@ import kr.co.are.searchcocktail.domain.entity.drink.DrinkInfoEntity
 @Composable
 fun SearchCocktailListView(
     itemList: List<DrinkInfoEntity>,
-    onTabFavorite: (id: String) -> Unit,
-    onTabItem: (id: String) -> Unit
+    onTabFavorite: (drinkInfo: DrinkInfoEntity) -> Unit,
+    onTabItem: (drinkInfo: DrinkInfoEntity) -> Unit
 ) {
     LazyColumn {
-        items(itemList.size) { item ->
-            var isFavorite by remember { mutableStateOf(false) }
+        items(itemList.size, key = { itemList[it].id }) { item ->
+            val drinkInfo = itemList[item]
+            var isFavorite by remember(drinkInfo.id) { mutableStateOf(drinkInfo.isFavorite) }
+
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(8.dp)
+                    .clickable {
+                        onTabItem(drinkInfo)
+                    }
             ) {
                 AsyncImage(
-                    model = itemList[item].thumbUrl,
+                    model = drinkInfo.thumbUrl,
                     contentDescription = null,
                     modifier = Modifier
                         .size(64.dp)
@@ -54,20 +60,20 @@ fun SearchCocktailListView(
                         .padding(end = 8.dp)
                 ) {
                     Text(
-                        text = itemList[item].name ?: "",
+                        text = drinkInfo.name ?: "",
                         fontWeight = FontWeight.Bold,
                         color = Color.Black
                     )
                     Text(
-                        text = itemList[item].category ?: "",
+                        text = drinkInfo.category ?: "",
                         color = Color.Gray
                     )
                 }
 
                 IconButton(onClick = {
+                    onTabFavorite(drinkInfo)
                     isFavorite = !isFavorite
-                    onTabFavorite(itemList[item].id)
-                    onTabItem(itemList[item].id)
+                    drinkInfo.isFavorite = isFavorite
                 }) {
                     Icon(
                         imageVector = if (isFavorite) {
