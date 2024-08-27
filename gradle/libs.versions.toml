@@ -29,6 +29,10 @@ lifecycleRuntimeComposeAndroid = "2.8.4"
 
 coilCompose = "2.5.0"
 
+room-runtime = "2.6.1"
+room-paging = "2.6.1"
+room-compiler = "2.6.1"
+
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -71,6 +75,10 @@ coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coi
 timber = { group = "com.jakewharton.timber", name = "timber", version.ref = "timber" }
 androidx-lifecycle-runtime-compose-android = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose-android", version.ref = "lifecycleRuntimeComposeAndroid" }
 
+#Room
+room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room-runtime" }
+room-paging = { group = "androidx.room", name = "room-paging", version.ref = "room-paging" }
+room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room-compiler" }
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
