@@ -3,6 +3,8 @@ package kr.co.are.searchcocktail.feature.search.screen
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -28,6 +30,9 @@ class SearchScreenViewModel @Inject constructor(
     private val _searchQuery = MutableStateFlow("")
     val searchQuery: StateFlow<String> = _searchQuery
 
+    private var searchJob: Job? = null //실시간 검색 기능 구현을 위한 Job
+
+
     init {
         viewModelScope.launch {
             loadDefaultDrinks()
@@ -36,10 +41,15 @@ class SearchScreenViewModel @Inject constructor(
 
     fun updateSearchQuery(query: String) {
         _searchQuery.value = query
+
+        searchJob?.cancel()
         if (query.isEmpty()) {
             loadDefaultDrinks()
         } else {
-            loadSearchDrinks(query)
+            searchJob = viewModelScope.launch {
+                delay(300) // 0.3초 대기
+                loadSearchDrinks(query)
+            }
         }
     }
 

@@ -27,15 +27,7 @@ class GetListCocktailByQueryUseCase @Inject constructor(
             println("#### searchCocktails: ${searchCocktails?.size}")
             if (query.isNotEmpty()) {
                 if (searchCocktails != null) {
-                    val searchResult = searchCocktails?.filter {
-                        it.name!!.uppercase().contains(query.uppercase())
-                    }
-                    println("#### searchCocktails- 2: ${searchResult?.size}")
-                    if (searchResult != null) {
-                        send(ResultDomain.Success(searchResult))
-                    } else {
-                        send(ResultDomain.Success(emptyList()))
-                    }
+                    send(ResultDomain.Success(searchCocktailsFilter(query)))
                 } else {
                     apiCocktailRepository.getListAllCocktailByFirstLetter(
                         firstLetter = query.first().toString()
@@ -43,7 +35,7 @@ class GetListCocktailByQueryUseCase @Inject constructor(
                         .catch { exception ->
                             send(ResultDomain.Error(exception, false))
                         }
-                        .collectLatest { resultData ->
+                        .collect { resultData ->
                             when (resultData) {
                                 is ResultData.Success -> {
                                     searchCocktails = resultData.data
@@ -73,4 +65,12 @@ class GetListCocktailByQueryUseCase @Inject constructor(
 
         }.flowOn(Dispatchers.IO)
     }
+
+    private fun searchCocktailsFilter(query: String): List<DrinkInfoEntity> {
+        val searchResult = searchCocktails?.filter {
+            it.name!!.uppercase().contains(query.uppercase())
+        }
+        return searchResult ?: emptyList()
+    }
+
 }
