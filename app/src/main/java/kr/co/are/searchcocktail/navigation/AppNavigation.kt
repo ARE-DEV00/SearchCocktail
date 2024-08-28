@@ -11,6 +11,7 @@ import kr.co.are.searchcocktail.core.navigation.Route
 import kr.co.are.searchcocktail.feature.detail.navigation.detailNavGraph
 import kr.co.are.searchcocktail.feature.detail.navigation.navigateDetail
 import kr.co.are.searchcocktail.feature.search.navigation.searchNavGraph
+import kr.co.are.searchcocktail.feature.streamtext.navigation.navigateStreamText
 import kr.co.are.searchcocktail.feature.streamtext.navigation.streamTextNavGraph
 import timber.log.Timber
 
@@ -35,7 +36,14 @@ fun AppNavigation() {
 
         streamTextNavGraph()
 
-        detailNavGraph(navController)
+        detailNavGraph(
+            navController,
+            onTabYoutube = {
+                navController.navigateStreamText()
+            },
+            onTabBack = {
+            navController.popBackStack()
+        })
 
     }
 }
