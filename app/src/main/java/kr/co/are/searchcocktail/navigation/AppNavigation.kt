@@ -10,6 +10,7 @@ import androidx.navigation.compose.rememberNavController
 import kr.co.are.searchcocktail.core.navigation.Route
 import kr.co.are.searchcocktail.feature.detail.navigation.detailNavGraph
 import kr.co.are.searchcocktail.feature.detail.navigation.navigateDetail
+import kr.co.are.searchcocktail.feature.favorite.navigation.favoriteNavGraph
 import kr.co.are.searchcocktail.feature.search.navigation.searchNavGraph
 import kr.co.are.searchcocktail.feature.streamtext.navigation.navigateStreamText
 import kr.co.are.searchcocktail.feature.streamtext.navigation.streamTextNavGraph
@@ -30,7 +31,6 @@ fun AppNavigation() {
         popEnterTransition = { slideInOut }) {
 
         searchNavGraph(onTabItem = {
-            Timber.d("### onTabItem: $it")
             navController.navigateDetail(it)
         })
 
@@ -42,8 +42,17 @@ fun AppNavigation() {
                 navController.navigateStreamText()
             },
             onTabBack = {
-            navController.popBackStack()
-        })
+                navController.popBackStack()
+            })
+
+        favoriteNavGraph(
+            onTabItem = {
+                navController.navigateDetail(it)
+            },
+            onTabBack = {
+                navController.popBackStack()
+            }
+        )
 
     }
 }
