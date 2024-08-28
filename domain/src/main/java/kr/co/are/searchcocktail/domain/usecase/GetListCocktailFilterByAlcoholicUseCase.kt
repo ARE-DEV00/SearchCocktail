@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import kr.co.are.searchcocktail.domain.entity.drink.DrinkInfoEntity
 import kr.co.are.searchcocktail.domain.model.ResultData
 import kr.co.are.searchcocktail.domain.model.ResultDomain
@@ -15,6 +16,7 @@ import javax.inject.Inject
 
 class GetListCocktailFilterByAlcoholicUseCase @Inject constructor(
     private val apiCocktailRepository: ApiCocktailRepository,
+    private val getFavoriteCocktailByIdUseCase: GetFavoriteCocktailByIdUseCase,
     private val databaseCocktailRepository: DatabaseCocktailRepository
 ) {
 
@@ -53,22 +55,35 @@ class GetListCocktailFilterByAlcoholicUseCase @Inject constructor(
                 .collectLatest { resultData ->
                     when (resultData) {
                         is ResultData.Success -> {
-                            resultData.data.map {
-                                val favoriteCocktail = favoriteCocktails?.find { favorite ->
-                                    favorite.id == it.id
-                                }
-                                if (favoriteCocktail != null) {
-                                    it.isFavorite = true
-                                    it
-                                } else {
-                                    it
-                                }
+                            val favoriteCocktailsFlow = resultData.data.map { drink ->
+                                getFavoriteCocktailByIdUseCase(drink.id)
+                                    .map { favoriteResult ->
+                                        when (favoriteResult) {
+                                            is ResultDomain.Success -> {
+                                                drink.isFavorite = favoriteResult.data != null
+                                            }
+                                            else -> {
+                                                drink.isFavorite = false
+                                            }
+                                        }
+                                        drink
+                                    }
                             }
-                            send(ResultDomain.Success(resultData.data))
+
+                            kotlinx.coroutines.flow.combine(favoriteCocktailsFlow) { drinks ->
+                                drinks.toList()
+                            }.collect { drinksWithFavoriteStatus ->
+                                send(ResultDomain.Success(drinksWithFavoriteStatus))
+                            }
                         }
 
                         is ResultData.Error -> {
-                            send(ResultDomain.Error(resultData.exception, resultData.isNetwork))
+                            send(
+                                ResultDomain.Error(
+                                    resultData.exception,
+                                    resultData.isNetwork
+                                )
+                            )
                         }
 
                         is ResultData.Loading -> {

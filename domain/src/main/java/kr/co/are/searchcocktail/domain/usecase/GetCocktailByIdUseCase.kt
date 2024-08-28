@@ -15,7 +15,7 @@ import javax.inject.Inject
 
 class GetCocktailByIdUseCase @Inject constructor(
     private val apiCocktailRepository: ApiCocktailRepository,
-    private val databaseCocktailRepository: DatabaseCocktailRepository
+    private val getFavoriteCocktailByIdUseCase: GetFavoriteCocktailByIdUseCase,
 ) {
     suspend operator fun invoke(
         id:String
@@ -29,7 +29,27 @@ class GetCocktailByIdUseCase @Inject constructor(
                 .collectLatest { resultData ->
                     when (resultData) {
                         is ResultData.Success -> {
-                            send(ResultDomain.Success(resultData.data))
+                            val drink = resultData.data
+                            if (drink != null) {
+                                // 즐겨찾기 여부를 확인하는 로직 추가
+                                getFavoriteCocktailByIdUseCase(drink.id)
+                                    .catch { exception ->
+                                        // 예외 발생 시 즐겨찾기 상태는 false로 간주
+                                        drink.isFavorite = false
+                                    }
+                                    .collect { favoriteResult ->
+                                        when (favoriteResult) {
+                                            is ResultDomain.Success -> {
+                                                drink.isFavorite = favoriteResult.data != null
+                                            }
+                                            else -> {
+                                                drink.isFavorite = false
+                                            }
+                                        }
+                                    }
+                            }
+                            // 최종 결과를 전달
+                            send(ResultDomain.Success(drink))
                         }
 
                         is ResultData.Error -> {
