@@ -48,7 +48,7 @@ import kr.co.are.searchcocktail.feature.detail.model.DetailUiState
 fun DetailScreen(
     viewModel: DetailViewModel = hiltViewModel(),
     id: String? = null,
-    onTabYoutube: (String) -> Unit,
+    onTabYoutube: () -> Unit,
     onTabBack: () -> Unit
 ) {
     LaunchedEffect(key1 = id) {
@@ -74,20 +74,20 @@ fun DetailScreen(
                 is DetailUiState.Error -> DetailError()
                 is DetailUiState.Success -> {
                     DetailSuccess(uiState)
-                    FloatingActionButton(
-                        modifier = Modifier
-                            .align(Alignment.BottomEnd)  // Align the FAB to the bottom end
-                            .padding(16.dp),
-                        onClick = {
-                            onTabYoutube(uiState.drinkInfo.id)
-                        }) {
-                        Icon(
-                            imageVector = Icons.Default.PlayArrow,
-                            contentDescription = null,
-                            tint = Color.Red,
-                        )
-                    }
                 }
+            }
+            FloatingActionButton(
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)  // Align the FAB to the bottom end
+                    .padding(16.dp),
+                onClick = {
+                    onTabYoutube()//ID는 실제 사용하지 않음.
+                }) {
+                Icon(
+                    imageVector = Icons.Default.PlayArrow,
+                    contentDescription = null,
+                    tint = Color.Red,
+                )
             }
         }
 

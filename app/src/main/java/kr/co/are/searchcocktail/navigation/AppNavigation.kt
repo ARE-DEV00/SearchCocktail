@@ -40,7 +40,6 @@ fun AppNavigation() {
         streamTextNavGraph()
 
         detailNavGraph(
-            navController,
             onTabYoutube = {
                 navController.navigateStreamText()
             }, onTabBack = {
