@@ -3,6 +3,7 @@ package kr.co.are.searchcocktail.core.navigation.component
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Favorite
@@ -21,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
@@ -76,9 +78,12 @@ fun AppHeader(
         Text(
             text = headerTitle,
             modifier = Modifier
-                .align(Alignment.Center),
+                .align(Alignment.Center)
+                .padding(start = 50.dp, end = 50.dp),
             textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.headlineMedium
+            style = MaterialTheme.typography.headlineSmall,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
         )
 
         if (rightIconImageVector != null) {

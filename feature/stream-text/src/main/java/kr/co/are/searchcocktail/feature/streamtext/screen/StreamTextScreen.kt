@@ -12,6 +12,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,6 +27,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kr.co.are.searchcocktail.core.navigation.component.AppHeaderScreen
 import kr.co.are.searchcocktail.core.youtubeplayer.component.YoutubePlayer
 import kr.co.are.searchcocktail.domain.entity.streamtext.ParagraphChildEntity
 import kr.co.are.searchcocktail.feature.streamtext.component.KaraokeText
@@ -35,55 +38,63 @@ import timber.log.Timber
 
 @Composable
 fun StreamTextScreen(
-    viewModel: StreamTextViewModel = hiltViewModel()
+    viewModel: StreamTextViewModel = hiltViewModel(),
+    onTabBack: () -> Unit
 ) {
     val streamTextUiState by viewModel.streamTextUiState.collectAsStateWithLifecycle()
 
-
-
-    when (val uiState = streamTextUiState) {
-        is StreamTextUiState.Loading -> {
-            StreamTextLoading()
+    AppHeaderScreen(
+        headerTitle = "Youtube",
+        leftIconImageVector = Icons.AutoMirrored.Filled.ArrowBack,
+        modifier = Modifier.fillMaxSize(),
+        onTabLeftIcon = {
+            onTabBack()
         }
+    ) {
+        when (val uiState = streamTextUiState) {
+            is StreamTextUiState.Loading -> {
+                StreamTextLoading()
+            }
 
-        is StreamTextUiState.Error -> {
-            StreamTextError()
-        }
+            is StreamTextUiState.Error -> {
+                StreamTextError()
+            }
 
-        is StreamTextUiState.Success -> {
-            Column {
-                YoutubePlayer(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(300.dp),
-                    bridgeName = "SearchCocktail",
-                    videoId = uiState.streamTextInfo?.videoUrl ?: "",
-                    onPlayTimeUpdated = { time ->
-                        Timber.d("#### onPlayTimeUpdated-${time}")
-                        viewModel.updatePlayTime(time)
-                    }
-                )
-                TextParagraphLayout {
-                    uiState.streamTextInfo?.lexicalEntity?.editorState?.root?.children?.let { children ->
-                        children.forEach { child ->
-                            child.children.forEach {
-                                when (it) {
-                                    is ParagraphChildEntity.SpeakerBlockEntity -> {
+            is StreamTextUiState.Success -> {
+                Column {
+                    YoutubePlayer(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(300.dp),
+                        bridgeName = "SearchCocktail",
+                        videoId = uiState.streamTextInfo?.videoUrl ?: "",
+                        onPlayTimeUpdated = { time ->
+                            Timber.d("#### onPlayTimeUpdated-${time}")
+                            viewModel.updatePlayTime(time)
+                        }
+                    )
+                    TextParagraphLayout {
+                        uiState.streamTextInfo?.lexicalEntity?.editorState?.root?.children?.let { children ->
+                            children.forEach { child ->
+                                child.children.forEach {
+                                    when (it) {
+                                        is ParagraphChildEntity.SpeakerBlockEntity -> {
 
-                                    }
+                                        }
 
-                                    is ParagraphChildEntity.KaraokeEntity -> {
-                                        KaraokeText(
-                                            it,
-                                            isHighlighted = uiState.playTime >= it.s && uiState.playTime <= it.e,
-                                            onTabText = { startTime, endTime ->
-                                                Timber.d("#### onTabText-:${startTime}-${endTime}")
-                                            }
-                                        )
+                                        is ParagraphChildEntity.KaraokeEntity -> {
+                                            KaraokeText(
+                                                it,
+                                                isHighlighted = uiState.playTime >= it.s && uiState.playTime <= it.e,
+                                                onTabText = { startTime, endTime ->
+                                                    Timber.d("#### onTabText-:${startTime}-${endTime}")
+                                                }
+                                            )
+                                        }
                                     }
                                 }
-                            }
 
+                            }
                         }
                     }
                 }
