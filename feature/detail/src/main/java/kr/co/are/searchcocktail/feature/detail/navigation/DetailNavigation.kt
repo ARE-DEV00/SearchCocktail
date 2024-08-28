@@ -15,8 +15,7 @@ fun NavController.navigateDetail(id: String) {
 }
 
 fun NavGraphBuilder.detailNavGraph(
-    navController: NavController,
-    onTabYoutube: (String) -> Unit,
+    onTabYoutube: () -> Unit,
     onTabBack: () -> Unit
 ) {
     composable(

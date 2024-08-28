@@ -37,10 +37,13 @@ fun AppNavigation() {
             navController.navigateFavorite()
         })
 
-        streamTextNavGraph()
+        streamTextNavGraph(
+            onTabBack = {
+                navController.popBackStack()
+            }
+        )
 
         detailNavGraph(
-            navController,
             onTabYoutube = {
                 navController.navigateStreamText()
             }, onTabBack = {
