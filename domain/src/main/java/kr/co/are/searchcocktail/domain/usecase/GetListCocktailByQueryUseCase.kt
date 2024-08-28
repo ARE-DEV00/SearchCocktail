@@ -1,11 +1,7 @@
 package kr.co.are.searchcocktail.domain.usecase
 
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.channelFlow
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.*
 import kr.co.are.searchcocktail.domain.entity.drink.DrinkInfoEntity
 import kr.co.are.searchcocktail.domain.model.ResultData
 import kr.co.are.searchcocktail.domain.model.ResultDomain
@@ -15,10 +11,9 @@ import javax.inject.Inject
 
 class GetListCocktailByQueryUseCase @Inject constructor(
     private val apiCocktailRepository: ApiCocktailRepository,
-    private val databaseCocktailRepository: DatabaseCocktailRepository
+    private val getFavoriteCocktailByIdUseCase: GetFavoriteCocktailByIdUseCase,
 ) {
     private var searchCocktails: List<DrinkInfoEntity>? = null
-    private var favoriteCocktails: List<DrinkInfoEntity>? = null
 
     suspend operator fun invoke(
         query: String,
@@ -27,33 +22,7 @@ class GetListCocktailByQueryUseCase @Inject constructor(
         return channelFlow {
             if (isRefresh) {
                 searchCocktails = null
-                favoriteCocktails = null
             }
-
-            databaseCocktailRepository.getFavoriteDrinkInfoList()
-                .catch { exception ->
-                    send(ResultDomain.Error(exception, false))
-                }
-                .collectLatest { resultData ->
-                    when (resultData) {
-                        is ResultData.Success -> {
-                            favoriteCocktails = resultData.data
-                        }
-
-                        is ResultData.Error -> {
-                            send(
-                                ResultDomain.Error(
-                                    resultData.exception,
-                                    resultData.isNetwork
-                                )
-                            )
-                        }
-
-                        ResultData.Loading -> {
-                            send(ResultDomain.Loading)
-                        }
-                    }
-                }
 
             println("#### searchCocktails: ${searchCocktails?.size}")
             if (query.isNotEmpty()) {
@@ -77,18 +46,27 @@ class GetListCocktailByQueryUseCase @Inject constructor(
                         .collectLatest { resultData ->
                             when (resultData) {
                                 is ResultData.Success -> {
-                                    searchCocktails = resultData.data.map {
-                                        val favoriteCocktail = favoriteCocktails?.find { favorite ->
-                                            favorite.id == it.id
-                                        }
-                                        if (favoriteCocktail != null) {
-                                            it.isFavorite = true
-                                            it
-                                        } else {
-                                            it
-                                        }
+                                    val favoriteCocktailsFlow = resultData.data.map { drink ->
+                                        getFavoriteCocktailByIdUseCase(drink.id)
+                                            .map { favoriteResult ->
+                                                when (favoriteResult) {
+                                                    is ResultDomain.Success -> {
+                                                        drink.isFavorite = favoriteResult.data != null
+                                                    }
+                                                    else -> {
+                                                        drink.isFavorite = false
+                                                    }
+                                                }
+                                                drink
+                                            }
                                     }
-                                    send(ResultDomain.Success(resultData.data))
+
+                                    combine(favoriteCocktailsFlow) { drinks ->
+                                        drinks.toList()
+                                    }.collect { drinksWithFavoriteStatus ->
+                                        searchCocktails = drinksWithFavoriteStatus
+                                        send(ResultDomain.Success(drinksWithFavoriteStatus))
+                                    }
                                 }
 
                                 is ResultData.Error -> {
@@ -104,13 +82,10 @@ class GetListCocktailByQueryUseCase @Inject constructor(
                                     send(ResultDomain.Loading)
                                 }
                             }
-
                         }
                 }
-
             } else {
                 searchCocktails = null
-                favoriteCocktails = null
             }
 
         }.flowOn(Dispatchers.IO)

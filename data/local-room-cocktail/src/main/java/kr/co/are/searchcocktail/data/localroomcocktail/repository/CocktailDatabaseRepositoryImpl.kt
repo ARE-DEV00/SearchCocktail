@@ -24,8 +24,35 @@ class CocktailDatabaseRepositoryImpl @Inject constructor(
                         id = it.id,
                         name = it.name,
                         category = it.category,
+                        thumbUrl = it.thumbUrl,
                     )
                 }))
+            } catch (e: Exception) {
+                emit(ResultData.Error(e, false))
+            }
+        }
+    }
+
+    override suspend fun getFavoriteDrinkInfo(id: String): Flow<ResultData<DrinkInfoEntity?>> {
+        return flow {
+            try {
+                emit(ResultData.Loading)
+
+                val favoriteCocktailInfo = appDatabase.cocktailDao().selectFavoriteDrinkInfo(id)
+
+                if(favoriteCocktailInfo != null){
+                    emit(ResultData.Success(
+                        DrinkInfoEntity(
+                            id = favoriteCocktailInfo.id,
+                            name = favoriteCocktailInfo.name,
+                            category = favoriteCocktailInfo.category,
+                            thumbUrl = favoriteCocktailInfo.thumbUrl,
+                        )
+                    ))
+                }else{
+                    emit(ResultData.Error(Exception("Not Found"), false))
+                }
+
             } catch (e: Exception) {
                 emit(ResultData.Error(e, false))
             }

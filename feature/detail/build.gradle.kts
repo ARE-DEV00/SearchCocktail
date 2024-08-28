@@ -1,11 +1,14 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
+    alias(libs.plugins.hilt.android)
+    alias(libs.plugins.ksp)
     alias(libs.plugins.compose.compiler)
+
 }
 
 android {
-    namespace = "kr.co.are.searchcocktail.core.navigation"
+    namespace = "kr.co.are.searchcocktail.feature.detail"
     compileSdk = 34
 
     defaultConfig {
@@ -33,6 +36,10 @@ android {
 }
 
 dependencies {
+    compileOnly(project(":core:build-config-stub"))
+    implementation(project(":core:navigation"))
+    implementation(project(":domain"))
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -42,6 +49,19 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.lifecycle.runtime.compose.android)
+
+
+    //Hilt
+    implementation(libs.hilt.android)
+    implementation(libs.androidx.navigation.runtime.ktx)
+    ksp(libs.hilt.android.compiler)
+    implementation(libs.hilt.navigation.compose)
+
+    //Navigation
+    implementation(libs.navigation.compose)
+
+    //Coil
+    implementation(libs.coil.compose)
 
     //Logger
     implementation(libs.timber)
