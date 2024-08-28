@@ -71,6 +71,7 @@ class CocktailDatabaseRepositoryImpl @Inject constructor(
                         id = drinkInfoEntity.id,
                         name = drinkInfoEntity.name,
                         category = drinkInfoEntity.category,
+                        thumbUrl = drinkInfoEntity.thumbUrl,
                     )
                 )
                 emit(ResultData.Success(true))
