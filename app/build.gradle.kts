@@ -85,6 +85,7 @@ dependencies {
     implementation(project(":feature:search"))
     implementation(project(":feature:stream-text"))
     implementation(project(":feature:detail"))
+    implementation(project(":feature:favorite"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
