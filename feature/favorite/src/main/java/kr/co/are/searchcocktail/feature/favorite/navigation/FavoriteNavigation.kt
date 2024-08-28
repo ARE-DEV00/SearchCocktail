@@ -8,7 +8,7 @@ import androidx.navigation.navArgument
 import kr.co.are.searchcocktail.core.navigation.Route
 import kr.co.are.searchcocktail.feature.favorite.screen.FavoriteScreen
 
-fun NavController.navigateFavorite(id: String) {
+fun NavController.navigateFavorite() {
     navigate(Route.Favorite.path)
 }
 
@@ -18,7 +18,6 @@ fun NavGraphBuilder.favoriteNavGraph(
 ) {
     composable(
         route = Route.Favorite.path,
-        arguments = listOf(navArgument("id") { type = NavType.StringType })
     ) { backStackEntry ->
         FavoriteScreen(onTabItem = onTabItem, onTabBack = onTabBack)
     }
