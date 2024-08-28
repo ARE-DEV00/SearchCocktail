@@ -7,7 +7,14 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -16,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kr.co.are.searchcocktail.domain.entity.drink.DrinkInfoEntity
@@ -28,93 +36,108 @@ import timber.log.Timber
 @Composable
 fun SearchScreen(
     viewModel: SearchScreenViewModel = hiltViewModel(),
-    onTabItem: (drinkInfo: String) -> Unit
+    onTabItem: (drinkInfo: String) -> Unit,
+    onTabFavorites: () -> Unit
 ) {
     val focusManager = LocalFocusManager.current
     val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
     val searchUiState by viewModel.searchUiState.collectAsStateWithLifecycle()
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(color = Color(0xFFF0F0F0))
-            .pointerInput(Unit) {// 터치 시 키보드 숨기기
-                detectTapGestures(onTap = {
-                    focusManager.clearFocus()
-                })
-            }
-    ) {
-        Box(
+    Box(modifier = Modifier.fillMaxSize()) {
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
+                .fillMaxSize()
+                .background(color = Color(0xFFF0F0F0))
+                .pointerInput(Unit) {
+                    // 터치 시 키보드 숨기기
+                    detectTapGestures(onTap = {
+                        focusManager.clearFocus()
+                    })
+                }
         ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
             ) {
-                SearchTextField(
-                    modifier = Modifier
-                        .weight(1f),
-                    text = searchQuery,
-                    hint = "검색어를 입력해주세요.",
-                    onTextChanged = {
-                        viewModel.updateSearchQuery(it)
-                    }
-                )
-
-                /*Button(onClick = {}, modifier = Modifier.padding(5.dp)) {
-                    Text(text = "검색")
-                }*/
-            }
-
-        }
-        when (val uiState = searchUiState) {
-            is SearchUiState.Loading -> {
-                SearchLoading()
-            }
-
-            is SearchUiState.Error -> {
-                Timber.d("isNetwork : ${uiState.isNetwork}")
-                if (uiState.isNetwork) {
-                    SearchNetworkError()
-                } else {
-                    SearchError()
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    SearchTextField(
+                        modifier = Modifier
+                            .weight(1f),
+                        text = searchQuery,
+                        hint = "검색어를 입력해주세요.",
+                        onTextChanged = {
+                            viewModel.updateSearchQuery(it)
+                        }
+                    )
                 }
+
             }
+            when (val uiState = searchUiState) {
+                is SearchUiState.Loading -> {
+                    SearchLoading()
+                }
 
-            is SearchUiState.Success -> {
-                if (uiState.isDefault) {
-                    if(uiState.drinks.isNotEmpty()){
-                        DefaultCocktailListView(
-                            itemList = uiState.drinks,
-                            onTabImage = { drinkInfo ->
-                                Timber.d("onTabImage:$drinkInfo")
-                                onTabItem(drinkInfo.id)
-                            }
-                        )
-                    }else{
-                        DefaultEmptyList()
-                    }
-
-                } else {
-                    if (uiState.drinks.isNotEmpty()) {
-                        SearchCocktailListView(
-                            itemList = uiState.drinks,
-                            onTabFavorite = { id ->
-                                Timber.d("onTabFavorite:$id")
-                                viewModel.updateFavorite(id)
-                            },
-                            onTabItem = { drinkInfo ->
-                                Timber.d("onTabItem:$drinkInfo")
-                                onTabItem(drinkInfo.id)
-                            })
+                is SearchUiState.Error -> {
+                    Timber.d("isNetwork : ${uiState.isNetwork}")
+                    if (uiState.isNetwork) {
+                        SearchNetworkError()
                     } else {
-                        SearchEmptyList()
+                        SearchError()
                     }
                 }
 
+                is SearchUiState.Success -> {
+                    if (uiState.isDefault) {
+                        if (uiState.drinks.isNotEmpty()) {
+                            DefaultCocktailListView(
+                                itemList = uiState.drinks,
+                                onTabImage = { drinkInfo ->
+                                    Timber.d("onTabImage:$drinkInfo")
+                                    onTabItem(drinkInfo.id)
+                                }
+                            )
+                        } else {
+                            DefaultEmptyList()
+                        }
+
+                    } else {
+                        if (uiState.drinks.isNotEmpty()) {
+                            SearchCocktailListView(
+                                itemList = uiState.drinks,
+                                onTabFavorite = { id ->
+                                    Timber.d("onTabFavorite:$id")
+                                    viewModel.updateFavorite(id)
+                                },
+                                onTabItem = { drinkInfo ->
+                                    Timber.d("onTabItem:$drinkInfo")
+                                    onTabItem(drinkInfo.id)
+                                })
+                        } else {
+                            SearchEmptyList()
+                        }
+                    }
+
+                }
             }
+        }
+
+        FloatingActionButton(
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(16.dp),
+            onClick = {
+                onTabFavorites()
+            }) {
+            Icon(
+                imageVector = Icons.Default.Favorite,
+                contentDescription = null,
+                tint = Color.Red,
+            )
         }
     }
+
 }
 
 @Composable

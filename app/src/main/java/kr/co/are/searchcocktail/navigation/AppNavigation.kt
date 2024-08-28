@@ -11,6 +11,7 @@ import kr.co.are.searchcocktail.core.navigation.Route
 import kr.co.are.searchcocktail.feature.detail.navigation.detailNavGraph
 import kr.co.are.searchcocktail.feature.detail.navigation.navigateDetail
 import kr.co.are.searchcocktail.feature.favorite.navigation.favoriteNavGraph
+import kr.co.are.searchcocktail.feature.favorite.navigation.navigateFavorite
 import kr.co.are.searchcocktail.feature.search.navigation.searchNavGraph
 import kr.co.are.searchcocktail.feature.streamtext.navigation.navigateStreamText
 import kr.co.are.searchcocktail.feature.streamtext.navigation.streamTextNavGraph
@@ -22,16 +23,18 @@ fun AppNavigation() {
     val navController = rememberNavController()
 
     val slideInOut = fadeIn() + slideInHorizontally(
-        initialOffsetX = { 300 },
-        animationSpec = tween(300)
+        initialOffsetX = { 300 }, animationSpec = tween(300)
     )
 
-    NavHost(navController = navController, startDestination = Route.Search.path,
+    NavHost(navController = navController,
+        startDestination = Route.Search.path,
         enterTransition = { slideInOut },
         popEnterTransition = { slideInOut }) {
 
         searchNavGraph(onTabItem = {
             navController.navigateDetail(it)
+        }, onTabFavorites = {
+            navController.navigateFavorite()
         })
 
         streamTextNavGraph()
@@ -40,19 +43,15 @@ fun AppNavigation() {
             navController,
             onTabYoutube = {
                 navController.navigateStreamText()
-            },
-            onTabBack = {
+            }, onTabBack = {
                 navController.popBackStack()
             })
 
-        favoriteNavGraph(
-            onTabItem = {
-                navController.navigateDetail(it)
-            },
-            onTabBack = {
-                navController.popBackStack()
-            }
-        )
+        favoriteNavGraph(onTabItem = {
+            navController.navigateDetail(it)
+        }, onTabBack = {
+            navController.popBackStack()
+        })
 
     }
 }
