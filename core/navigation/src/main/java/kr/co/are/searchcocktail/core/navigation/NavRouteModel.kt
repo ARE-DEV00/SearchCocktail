@@ -15,4 +15,8 @@ sealed interface Route {
     data object StreamText : Route {
         override val path: String = "streamText"
     }
+
+    data object Favorite : Route {
+        override val path: String = "favorite"
+    }
 }

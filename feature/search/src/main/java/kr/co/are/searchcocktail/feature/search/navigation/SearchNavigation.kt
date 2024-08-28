@@ -12,8 +12,9 @@ fun NavController.navigateSearch() {
 
 fun NavGraphBuilder.searchNavGraph(
     onTabItem: (id: String) -> Unit,
+    onTabFavorites: () -> Unit
 ) {
     composable(route = Search.path) {
-        SearchScreen(onTabItem=onTabItem)
+        SearchScreen(onTabItem = onTabItem, onTabFavorites = onTabFavorites)
     }
 }

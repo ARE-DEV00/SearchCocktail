@@ -25,6 +25,7 @@ class CocktailDatabaseRepositoryImpl @Inject constructor(
                         name = it.name,
                         category = it.category,
                         thumbUrl = it.thumbUrl,
+                        isFavorite = true
                     )
                 }))
             } catch (e: Exception) {
@@ -47,6 +48,7 @@ class CocktailDatabaseRepositoryImpl @Inject constructor(
                             name = favoriteCocktailInfo.name,
                             category = favoriteCocktailInfo.category,
                             thumbUrl = favoriteCocktailInfo.thumbUrl,
+                            isFavorite = true
                         )
                     ))
                 }else{
