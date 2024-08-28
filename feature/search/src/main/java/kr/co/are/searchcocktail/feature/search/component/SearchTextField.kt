@@ -1,11 +1,13 @@
 package kr.co.are.searchcocktail.feature.search.component
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalTextStyle
@@ -24,11 +26,13 @@ fun SearchTextField(
     text: String,
     hint: String,
     onTextChanged: (String) -> Unit,
+    onTextClear: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Box(modifier = modifier){
         BasicTextField(
             value = text,
+            maxLines = 1,
             onValueChange = onTextChanged,
             textStyle = LocalTextStyle.current.copy(color = Color(0xFF424242)),
             keyboardOptions = KeyboardOptions.Default.copy(
@@ -64,6 +68,18 @@ fun SearchTextField(
                             }
                             innerTextField()
                         }
+
+                        if (text.isNotEmpty()) {
+                            Icon(
+                                modifier = Modifier.clickable {
+                                    onTextClear()
+                                },
+                                imageVector = Icons.Default.Clear,
+                                contentDescription = null,
+                                tint = Color(0xFF424242)
+                            )
+                        }
+
                     }
                 }
             }
@@ -78,6 +94,7 @@ fun SearchTextFieldPreview() {
     SearchTextField(
         text = "테스트",
         hint = "검색어를 입력해주세요",
-        onTextChanged = {}
+        onTextChanged = {},
+        onTextClear = {}
     )
 }

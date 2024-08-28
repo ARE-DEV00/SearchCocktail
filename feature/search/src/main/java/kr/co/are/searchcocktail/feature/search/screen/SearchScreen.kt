@@ -69,6 +69,10 @@ fun SearchScreen(
                         hint = "검색어를 입력해주세요.",
                         onTextChanged = {
                             viewModel.updateSearchQuery(it)
+                        },
+                        onTextClear = {
+                            focusManager.clearFocus()
+                            viewModel.updateSearchQuery("")
                         }
                     )
                 }
