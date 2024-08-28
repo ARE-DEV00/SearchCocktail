@@ -1,23 +1,20 @@
 package kr.co.are.searchcocktail.core.youtubeplayer.component
 
 import android.webkit.WebView
-import android.webkit.WebViewClient
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
 import kr.co.are.searchcocktail.core.youtubeplayer.bridge.WebViewYoutubePlayerBridge
+import timber.log.Timber
 
 @Composable
 fun YoutubePlayer(
     modifier: Modifier,
     bridgeName:String,
-    videoId: String,
-    height:String = "250",
+    videoUrl: String,
     onPlayTimeUpdated: (Float) -> Unit
 ) {
     val webView = WebView(LocalContext.current).apply {
@@ -27,33 +24,53 @@ fun YoutubePlayer(
         addJavascriptInterface(WebViewYoutubePlayerBridge(onPlayTimeUpdated), bridgeName)
     }
 
-    val htmlData = getHtmlYoutube(bridgeName, videoId, height)
-    Box(modifier = modifier.fillMaxSize()) {
-        AndroidView(
-            modifier = modifier.fillMaxSize(),
-            factory = { webView }) { view ->
-            view.loadDataWithBaseURL(
-                "https://www.youtube.com",
-                htmlData,
-                "text/html",
-                "UTF-8",
-                null
-            )
+    extractYouTubeId(videoUrl)?.let { videoId ->
+        val htmlData = getHtmlYoutube(bridgeName, videoId)
+        Box(modifier = modifier.fillMaxWidth()) {
+            AndroidView(
+                modifier = modifier.fillMaxWidth(),
+                factory = { webView }) { view ->
+                view.loadDataWithBaseURL(
+                    "https://www.youtube.com",
+                    htmlData,
+                    "text/html",
+                    "UTF-8",
+                    null
+                )
+            }
         }
     }
-
-
 }
 
-fun getHtmlYoutube(bridgeName: String, videoId: String, height:String): String {
+//Youtube ID 추출
+fun extractYouTubeId(url: String): String? {
+    if(url.contains("v=")){
+        val split = url.split("v=")
+        Timber.d("#### split : ${split[1]}")
+        return split[1]
+    }
+    return null
+}
+
+fun getHtmlYoutube(bridgeName: String, videoId: String): String {
     return """
         <!DOCTYPE html>
             <html>
               <meta name="viewport" content="width=device-width, initial-scale=1">
               <style>
                 body {
+                  height: 100%;
+                  width: 100%;
                   margin: 0;
                   padding: 0;
+                }
+                
+                #player {
+                 position: fixed;/*꽉 찬 화면*/
+                 top: 0;
+                 left: 0;
+                 width: 100%;
+                 height: 100%;
                 }
                 </style>
               <body>
@@ -70,7 +87,7 @@ fun getHtmlYoutube(bridgeName: String, videoId: String, height:String): String {
             
                   function onYouTubeIframeAPIReady() {
                     player = new YT.Player('player', {
-                      height: '${height}',
+                      height: '100%',
                       width: '100%',
                       videoId: '${videoId}',
                       events: {
@@ -81,7 +98,7 @@ fun getHtmlYoutube(bridgeName: String, videoId: String, height:String): String {
                   }
             
                   function onPlayerReady(event) {
-                    // 플레이어가 준비되었을 때 초기 작업을 여기에 추가할 수 있습니다.
+                    
                   }
             
                   function onPlayerStateChange(event) {
@@ -93,7 +110,7 @@ fun getHtmlYoutube(bridgeName: String, videoId: String, height:String): String {
                   }
             
                   function startUpdatingTime() {
-                    updateCurrentTime(); // 처음 한 번은 바로 호출
+                    updateCurrentTime();
                     timeUpdater = setInterval(updateCurrentTime, 1000); // 1초마다 현재 재생 시간을 업데이트
                   }
             

@@ -2,12 +2,15 @@ package kr.co.are.searchcocktail.feature.streamtext.screen
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -32,7 +35,11 @@ fun StreamTextScreen(
     val streamTextUiState by viewModel.streamTextUiState.collectAsStateWithLifecycle()
 
     AppHeaderScreen(
-        headerTitle = "Youtube",
+        headerTitle = if (streamTextUiState is StreamTextUiState.Success) {
+            (streamTextUiState as StreamTextUiState.Success).streamTextInfo?.title ?: ""
+        } else {
+            ""
+        },
         leftIconImageVector = Icons.AutoMirrored.Filled.ArrowBack,
         modifier = Modifier.fillMaxSize(),
         onTabLeftIcon = {
@@ -53,11 +60,10 @@ fun StreamTextScreen(
                     YoutubePlayer(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(300.dp),
+                            .height(200.dp),
                         bridgeName = "SearchCocktail",
-                        videoId = uiState.streamTextInfo?.videoUrl ?: "",
+                        videoUrl = uiState.streamTextInfo?.videoUrl ?: "",
                         onPlayTimeUpdated = { time ->
-                            Timber.d("#### onPlayTimeUpdated-${time}")
                             viewModel.updatePlayTime(time)
                         }
                     )
@@ -67,7 +73,32 @@ fun StreamTextScreen(
                                 child.children.forEach {
                                     when (it) {
                                         is ParagraphChildEntity.SpeakerBlockEntity -> {
+                                            val hour = (it.time / 3600).toInt()
+                                            val minutes = (it.time / 60).toInt()
+                                            val seconds = (it.time % 60).toInt()
 
+                                            val time = if (hour > 0) {
+                                                "%02d:%02d:%02d".format(hour, minutes, seconds)
+                                            } else {
+                                                "%02d:%02d".format(minutes, seconds)
+                                            }
+
+                                            Box(
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .padding(top = 15.dp, bottom = 10.dp)
+                                            ) {
+                                                Row(modifier = Modifier.fillMaxWidth()) {
+                                                    Text(
+                                                        text = it.speaker,
+                                                        style = MaterialTheme.typography.bodyLarge
+                                                    )
+                                                    Text(
+                                                        text = "(${time})",
+                                                        style = MaterialTheme.typography.bodyLarge
+                                                    )
+                                                }
+                                            }
                                         }
 
                                         is ParagraphChildEntity.KaraokeEntity -> {
