@@ -24,7 +24,6 @@ fun YoutubePlayer(
         settings.javaScriptEnabled = true
         settings.loadWithOverviewMode = true
         settings.useWideViewPort = true
-        webViewClient = WebViewClient()
         addJavascriptInterface(WebViewYoutubePlayerBridge(onPlayTimeUpdated), bridgeName)
     }
 
@@ -94,7 +93,8 @@ fun getHtmlYoutube(bridgeName: String, videoId: String, height:String): String {
                   }
             
                   function startUpdatingTime() {
-                    timeUpdater = setInterval(updateCurrentTime, 100); // 0.1초마다 현재 재생 시간을 업데이트
+                    updateCurrentTime(); // 처음 한 번은 바로 호출
+                    timeUpdater = setInterval(updateCurrentTime, 1000); // 1초마다 현재 재생 시간을 업데이트
                   }
             
                   function stopUpdatingTime() {
