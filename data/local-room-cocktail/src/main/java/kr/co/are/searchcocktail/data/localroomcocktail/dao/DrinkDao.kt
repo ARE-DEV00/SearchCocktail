@@ -7,11 +7,11 @@ import kr.co.are.searchcocktail.data.localroomcocktail.entity.TableFavoriteDrink
 @Dao
 interface DrinkDao {
     //전체 즐겨찾기 조회
-    @Query("SELECT * FROM favorite_drink_info")
+    @Query("SELECT * FROM favorite_drink_info ORDER BY createdTime DESC")
     fun selectAllFavoriteDrinkInfo(): List<TableFavoriteDrinkInfoEntity>
 
     //즐겨찾기 조회
-    @Query("SELECT * FROM favorite_drink_info WHERE id = :id")
+    @Query("SELECT * FROM favorite_drink_info WHERE id = :id ORDER BY createdTime DESC")
     fun selectFavoriteDrinkInfo(id:String): TableFavoriteDrinkInfoEntity?
 
     //즐겨찾기 추가

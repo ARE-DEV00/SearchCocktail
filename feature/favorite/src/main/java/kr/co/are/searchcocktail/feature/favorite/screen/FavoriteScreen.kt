@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -41,9 +42,13 @@ fun FavoriteScreen(
     AppHeaderScreen(
         headerTitle = "Favorite",
         leftIconImageVector = Icons.AutoMirrored.Filled.ArrowBack,
+        rightIconImageVector = Icons.Default.Delete,
         modifier = Modifier.fillMaxSize(),
         onTabLeftIcon = {
             onTabBack()
+        },
+        onTabRightIcon = {
+            viewModel.deleteAllFavoriteCocktail()
         }
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
