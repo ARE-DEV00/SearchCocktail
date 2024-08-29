@@ -13,7 +13,8 @@ class GetListCocktailByQueryUseCase @Inject constructor(
     private val getFavoriteCocktailByIdUseCase: GetFavoriteCocktailByIdUseCase,
 ) {
     private var resultSearchCocktails: List<DrinkInfoEntity>? = null
-
+    private var searchQueryFirstLetter: String = ""
+    private var resultSearchQueryFirstLetter: String = ""
     suspend operator fun invoke(
         query: String,
         isRefresh: Boolean
@@ -25,11 +26,17 @@ class GetListCocktailByQueryUseCase @Inject constructor(
 
             println("#### searchCocktails: ${resultSearchCocktails?.size}")
             if (query.isNotEmpty()) {
+                searchQueryFirstLetter = query.first().toString()
+                //검색 요청 첫글자와 이전 요청 첫글자가 다르면 검색결과 초기화
+                if(resultSearchQueryFirstLetter != searchQueryFirstLetter) {
+                    resultSearchCocktails = null
+                }
+
                 if (resultSearchCocktails != null) {
                     send(ResultDomain.Success(searchFilter(resultSearchCocktails, query)))
                 } else {
                     apiCocktailRepository.getListAllCocktailByFirstLetter(
-                        firstLetter = query.first().toString()
+                        firstLetter = searchQueryFirstLetter
                     )
                         .catch { exception ->
                             send(ResultDomain.Error(exception, false))
@@ -56,6 +63,7 @@ class GetListCocktailByQueryUseCase @Inject constructor(
                                         drinks.toList()
                                     }.collectLatest { drinksWithFavoriteList ->
                                         resultSearchCocktails = drinksWithFavoriteList
+                                        resultSearchQueryFirstLetter = searchQueryFirstLetter
                                         send(ResultDomain.Success(searchFilter(resultSearchCocktails, query)))
                                     }
                                 }
