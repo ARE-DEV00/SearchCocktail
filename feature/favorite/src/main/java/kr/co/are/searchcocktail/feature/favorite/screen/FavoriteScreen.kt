@@ -10,6 +10,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,8 +30,13 @@ fun FavoriteScreen(
     onTabItem: (drinkInfo: String) -> Unit,
     onTabBack: () -> Unit
 ) {
-    val focusManager = LocalFocusManager.current
     val favoriteUiState by viewModel.favoriteUiState.collectAsStateWithLifecycle()
+
+    SideEffect {
+        if (favoriteUiState is FavoriteUiState.Success) {
+            viewModel.loadFavoriteCocktail()
+        }
+    }
 
     AppHeaderScreen(
         headerTitle = "Favorite",

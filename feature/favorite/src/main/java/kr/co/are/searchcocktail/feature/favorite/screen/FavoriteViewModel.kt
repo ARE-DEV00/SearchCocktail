@@ -23,7 +23,7 @@ class FavoriteViewModel @Inject constructor(
         loadFavoriteCocktail()
     }
 
-    private fun loadFavoriteCocktail() {
+    fun loadFavoriteCocktail() {
         viewModelScope.launch {
             getListFavoriteCocktailUseCase().collect { resultDomain ->
                 when (resultDomain) {

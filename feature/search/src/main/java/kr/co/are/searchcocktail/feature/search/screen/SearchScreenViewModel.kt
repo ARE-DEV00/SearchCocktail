@@ -17,6 +17,7 @@ import kr.co.are.searchcocktail.domain.usecase.AddFavoriteCocktailUseCase
 import kr.co.are.searchcocktail.domain.usecase.DeleteFavoriteCocktailByIdUseCase
 import kr.co.are.searchcocktail.domain.usecase.GetListCocktailByQueryUseCase
 import kr.co.are.searchcocktail.domain.usecase.GetListCocktailFilterByAlcoholicUseCase
+import kr.co.are.searchcocktail.domain.usecase.GetListSyncFavoriteCocktailUseCase
 import kr.co.are.searchcocktail.feature.search.model.SearchUiState
 import timber.log.Timber
 import javax.inject.Inject
@@ -26,7 +27,8 @@ class SearchScreenViewModel @Inject constructor(
     private val getListCocktailFilterByAlcoholicUseCase: GetListCocktailFilterByAlcoholicUseCase,
     private val getListCocktailByQueryUseCase: GetListCocktailByQueryUseCase,
     private val addFavoriteCocktailUseCase: AddFavoriteCocktailUseCase,
-    private val deleteFavoriteCocktailByIdUseCase: DeleteFavoriteCocktailByIdUseCase
+    private val deleteFavoriteCocktailByIdUseCase: DeleteFavoriteCocktailByIdUseCase,
+    private val getListSyncFavoriteCocktailUseCase:GetListSyncFavoriteCocktailUseCase,
 ) : ViewModel() {
 
     private val _searchUiState = MutableStateFlow<SearchUiState>(SearchUiState.Loading)
@@ -156,6 +158,31 @@ class SearchScreenViewModel @Inject constructor(
 
                         is ResultDomain.Success -> {
                             Timber.d("Success")
+                        }
+                    }
+                }
+        }
+    }
+
+    fun syncFavorite(drinks: List<DrinkInfoEntity>, isDefault: Boolean) {
+        viewModelScope.launch {
+            getListSyncFavoriteCocktailUseCase(drinks)
+                .catch {
+                    Timber.e(it)
+                }.collectLatest { resultDomain ->
+                    when (resultDomain) {
+                        is ResultDomain.Error -> {
+                            _searchUiState.value =
+                                SearchUiState.Error(isNetwork = resultDomain.isNetwork)
+                        }
+
+                        ResultDomain.Loading -> {
+                            _searchUiState.value = SearchUiState.Loading
+                        }
+
+                        is ResultDomain.Success -> {
+                            _searchUiState.value =
+                                SearchUiState.Success(resultDomain.data, isDefault = isDefault)
                         }
                     }
                 }
