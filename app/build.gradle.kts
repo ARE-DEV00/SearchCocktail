@@ -17,7 +17,7 @@ localProperties.load(FileInputStream(localPropertiesFile))
 val versionMajor = 1 // 0~9
 val versionMinor = 0 // 0~99
 val versionPatch = 0 // 0~99
-val versionHotfix = 0 // 0~99
+val versionHotfix = 1 // 0~99
 
 val versionCodeFinal =
     versionMajor * 10_000_000 + versionMinor * 100_000 + versionPatch * 1000 + versionHotfix
