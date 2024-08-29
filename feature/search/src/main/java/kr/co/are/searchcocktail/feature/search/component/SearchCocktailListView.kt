@@ -22,7 +22,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
@@ -30,6 +29,7 @@ import kr.co.are.searchcocktail.domain.entity.drink.DrinkInfoEntity
 
 @Composable
 fun SearchCocktailListView(
+    searchQuery: String,
     itemList: List<DrinkInfoEntity>,
     onTabFavorite: (drinkInfo: DrinkInfoEntity) -> Unit,
     onTabItem: (drinkInfo: DrinkInfoEntity) -> Unit
@@ -64,10 +64,9 @@ fun SearchCocktailListView(
                         .weight(1f)
                         .padding(end = 8.dp)
                 ) {
-                    Text(
+                    HighlightText(
                         text = drinkInfo.name ?: "",
-                        fontWeight = FontWeight.Bold,
-                        color = Color.Black
+                        highlight = searchQuery
                     )
                     Text(
                         text = drinkInfo.category ?: "",
@@ -93,4 +92,5 @@ fun SearchCocktailListView(
             }
         }
     }
+
 }
