@@ -1,5 +1,7 @@
 package kr.co.are.searchcocktail.feature.search.screen
 
+import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
@@ -17,10 +19,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -30,6 +36,7 @@ import kr.co.are.searchcocktail.feature.search.component.SearchCocktailListView
 import kr.co.are.searchcocktail.feature.search.component.SearchTextField
 import kr.co.are.searchcocktail.feature.search.model.SearchUiState
 import timber.log.Timber
+import kotlin.system.exitProcess
 
 @Composable
 fun SearchScreen(
@@ -41,12 +48,16 @@ fun SearchScreen(
     val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
     val searchUiState by viewModel.searchUiState.collectAsStateWithLifecycle()
 
+    BackOnPressed()
+
     SideEffect {
         if (searchUiState is SearchUiState.Success) {
             val uiState = searchUiState as SearchUiState.Success
             viewModel.syncFavorite(uiState.drinks, uiState.isDefault)
         }
     }
+
+
 
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
@@ -182,5 +193,20 @@ private fun SearchEmptyList() {
 private fun DefaultEmptyList() {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Text(text = "칵테일 정보가 없습니다.")
+    }
+}
+
+@Composable
+fun BackOnPressed() {
+    val context = LocalContext.current
+    var backPressedTime by remember { mutableLongStateOf(0L) }
+
+    BackHandler(enabled = true) {
+        if(System.currentTimeMillis() - backPressedTime <= 2000L) {
+            exitProcess(0)
+        } else {
+            Toast.makeText(context, "한 번 더 누르면 앱이 종료됩니다.", Toast.LENGTH_SHORT).show()
+        }
+        backPressedTime = System.currentTimeMillis()
     }
 }
