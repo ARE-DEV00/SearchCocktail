@@ -56,7 +56,7 @@ android {
             keyAlias = localProperties["KEY_ALIAS"] as String
             keyPassword = localProperties["KEY_PASSWORD"] as String
             storeFile = file(localProperties["STORE_FILE"] as String)
-            storePassword = localProperties["STROE_PASSWORD"] as String
+            storePassword = localProperties["STORE_PASSWORD"] as String
         }
     }
 
