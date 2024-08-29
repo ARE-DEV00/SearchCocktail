@@ -52,7 +52,7 @@ class SearchScreenViewModel @Inject constructor(
             loadDefaultDrinks()
         } else {
             searchJob = viewModelScope.launch {
-                delay(300) // 0.3초 대기
+                delay(500) // 0.5초 대기
                 loadSearchDrinks(query)
             }
         }

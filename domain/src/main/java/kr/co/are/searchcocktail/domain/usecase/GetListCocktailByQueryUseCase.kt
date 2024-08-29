@@ -6,14 +6,13 @@ import kr.co.are.searchcocktail.domain.entity.drink.DrinkInfoEntity
 import kr.co.are.searchcocktail.domain.model.ResultData
 import kr.co.are.searchcocktail.domain.model.ResultDomain
 import kr.co.are.searchcocktail.domain.repository.ApiCocktailRepository
-import kr.co.are.searchcocktail.domain.repository.DatabaseCocktailRepository
 import javax.inject.Inject
 
 class GetListCocktailByQueryUseCase @Inject constructor(
     private val apiCocktailRepository: ApiCocktailRepository,
     private val getFavoriteCocktailByIdUseCase: GetFavoriteCocktailByIdUseCase,
 ) {
-    private var searchCocktails: List<DrinkInfoEntity>? = null
+    private var resultSearchCocktails: List<DrinkInfoEntity>? = null
 
     suspend operator fun invoke(
         query: String,
@@ -21,21 +20,13 @@ class GetListCocktailByQueryUseCase @Inject constructor(
     ): Flow<ResultDomain<List<DrinkInfoEntity>>> {
         return channelFlow {
             if (isRefresh) {
-                searchCocktails = null
+                resultSearchCocktails = null
             }
 
-            println("#### searchCocktails: ${searchCocktails?.size}")
+            println("#### searchCocktails: ${resultSearchCocktails?.size}")
             if (query.isNotEmpty()) {
-                if (searchCocktails != null) {
-                    val searchResult = searchCocktails?.filter {
-                        it.name!!.uppercase().contains(query.uppercase())
-                    }
-                    println("#### searchCocktails- 2: ${searchResult?.size}")
-                    if (searchResult != null) {
-                        send(ResultDomain.Success(searchResult))
-                    } else {
-                        send(ResultDomain.Success(emptyList()))
-                    }
+                if (resultSearchCocktails != null) {
+                    send(ResultDomain.Success(searchFilter(resultSearchCocktails, query)))
                 } else {
                     apiCocktailRepository.getListAllCocktailByFirstLetter(
                         firstLetter = query.first().toString()
@@ -63,9 +54,9 @@ class GetListCocktailByQueryUseCase @Inject constructor(
 
                                     combine(favoriteCocktailsFlow) { drinks ->
                                         drinks.toList()
-                                    }.collect { drinksWithFavoriteStatus ->
-                                        searchCocktails = drinksWithFavoriteStatus
-                                        send(ResultDomain.Success(drinksWithFavoriteStatus))
+                                    }.collectLatest { drinksWithFavoriteList ->
+                                        resultSearchCocktails = drinksWithFavoriteList
+                                        send(ResultDomain.Success(searchFilter(resultSearchCocktails, query)))
                                     }
                                 }
 
@@ -85,9 +76,16 @@ class GetListCocktailByQueryUseCase @Inject constructor(
                         }
                 }
             } else {
-                searchCocktails = null
+                resultSearchCocktails = null
             }
 
         }.flowOn(Dispatchers.IO)
+    }
+
+    private fun searchFilter(searchCocktails: List<DrinkInfoEntity>?, query: String): List<DrinkInfoEntity> {
+        return searchCocktails?.filter {
+            it.name!!.uppercase().contains(query.uppercase())
+        } ?: emptyList()
+
     }
 }
