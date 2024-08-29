@@ -8,15 +8,16 @@ data class DrinkInfoEntity(
     val alcoholic: String? = null,          //알코올 여부
     val glass: String? = null,              //잔
 
-    val isFavorite: Boolean = false,        //즐겨찾기 여부
+    var isFavorite: Boolean = false,        //즐겨찾기 여부
 
     //소개
     val instructions: String? = null,       //영어(English)
-    val ingredientsEs: String? = null,      //스페인어(Spanish)
-    val ingredientsDe: String? = null,      //독일어(German)
-    val ingredientsIt: String? = null,      //이탈리아어(Italian)
-    val ingredientsZhHans: String? = null,  //중국어 간체(Chinese)
-    val ingredientsZhHant: String? = null,  //중국어 번체(Chinese)
+    val instructionsEs: String? = null,      //스페인어(Spanish)
+    val instructionsDe: String? = null,      //독일어(German)
+    val instructionsFr: String? = null,      //프랑스어(French)
+    val instructionsIt: String? = null,      //이탈리아어(Italian)
+    val instructionsZhHans: String? = null,  //중국어 간체(Chinese)
+    val instructionsZhHant: String? = null,  //중국어 번체(Chinese)
 
     //재료
     val ingredient1: String? = null,

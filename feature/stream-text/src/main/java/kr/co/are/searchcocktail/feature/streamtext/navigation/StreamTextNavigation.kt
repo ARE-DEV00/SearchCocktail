@@ -11,8 +11,9 @@ fun NavController.navigateStreamText() {
 }
 
 fun NavGraphBuilder.streamTextNavGraph(
+    onTabBack: () -> Unit
 ) {
     composable(route = StreamText.path) {
-        StreamTextScreen()
+        StreamTextScreen(onTabBack = onTabBack)
     }
 }

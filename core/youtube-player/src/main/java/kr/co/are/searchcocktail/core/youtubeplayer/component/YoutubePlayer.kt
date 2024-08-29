@@ -1,60 +1,126 @@
 package kr.co.are.searchcocktail.core.youtubeplayer.component
 
+import android.app.Activity
+import android.view.View
+import android.view.ViewGroup
+import android.webkit.WebChromeClient
 import android.webkit.WebView
-import android.webkit.WebViewClient
+import android.widget.FrameLayout
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.viewinterop.AndroidView
 import kr.co.are.searchcocktail.core.youtubeplayer.bridge.WebViewYoutubePlayerBridge
+import timber.log.Timber
 
 @Composable
 fun YoutubePlayer(
     modifier: Modifier,
-    bridgeName:String,
-    videoId: String,
-    height:String = "250",
-    onPlayTimeUpdated: (Float) -> Unit
+    bridgeName: String,
+    videoUrl: String,
+    onPlayTimeUpdated: (Float) -> Unit,
 ) {
-    val webView = WebView(LocalContext.current).apply {
-        settings.javaScriptEnabled = true
-        settings.loadWithOverviewMode = true
-        settings.useWideViewPort = true
-        webViewClient = WebViewClient()
-        addJavascriptInterface(WebViewYoutubePlayerBridge(onPlayTimeUpdated), bridgeName)
-    }
+    val activity = LocalView.current.context as Activity
 
-    val htmlData = getHtmlYoutube(bridgeName, videoId, height)
-    Box(modifier = modifier.fillMaxSize()) {
-        AndroidView(
-            modifier = modifier.fillMaxSize(),
-            factory = { webView }) { view ->
-            view.loadDataWithBaseURL(
-                "https://www.youtube.com",
-                htmlData,
-                "text/html",
-                "UTF-8",
-                null
-            )
+    var isFullScreen by remember { mutableStateOf(false) }
+    var customView: View? by remember { mutableStateOf(null) }
+    var customViewCallback: WebChromeClient.CustomViewCallback? by remember { mutableStateOf(null) }
+    val context = LocalContext.current
+
+    val webView = remember {
+        WebView(context).apply {
+            settings.javaScriptEnabled = true
+            settings.loadWithOverviewMode = true
+            settings.useWideViewPort = true
+            webChromeClient = object : WebChromeClient() {
+                override fun onShowCustomView(view: View, callback: CustomViewCallback) {
+                    // 전체 화면 모드 시작
+                    super.onShowCustomView(view, callback)
+                    isFullScreen = true
+
+                    if (customView != null) {
+                        onHideCustomView()
+                        return
+                    }
+
+                    customView = view
+                    (activity.window.decorView as FrameLayout).addView(
+                        customView,
+                        FrameLayout.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                        ),
+                    )
+                }
+
+                override fun onHideCustomView() {
+                    // 전체 화면 모드 종료
+                    isFullScreen = false
+                    (activity.window.decorView as FrameLayout).removeView(customView)
+                    customView = null
+                }
+            }
+            addJavascriptInterface(WebViewYoutubePlayerBridge(onPlayTimeUpdated), bridgeName)
         }
     }
 
-
+    extractYouTubeId(videoUrl)?.let { videoId ->
+        val htmlData = getHtmlYoutube(bridgeName, videoId)
+        Box(modifier = modifier.fillMaxWidth()) {
+            AndroidView(
+                modifier = Modifier.fillMaxSize(),
+                factory = { webView }) { view ->
+                view.loadDataWithBaseURL(
+                    "https://www.youtube.com",
+                    htmlData,
+                    "text/html",
+                    "UTF-8",
+                    null
+                )
+            }
+        }
+    }
 }
 
-fun getHtmlYoutube(bridgeName: String, videoId: String, height:String): String {
+
+//Youtube ID 추출
+fun extractYouTubeId(url: String): String? {
+    if (url.contains("v=")) {
+        val split = url.split("v=")
+        Timber.d("#### split : ${split[1]}")
+        return split[1]
+    }
+    return null
+}
+
+fun getHtmlYoutube(bridgeName: String, videoId: String): String {
     return """
         <!DOCTYPE html>
             <html>
               <meta name="viewport" content="width=device-width, initial-scale=1">
               <style>
                 body {
+                  height: 100%;
+                  width: 100%;
                   margin: 0;
                   padding: 0;
+                }
+                
+                #player {
+                 position: fixed;/*꽉 찬 화면*/
+                 top: 0;
+                 left: 0;
+                 width: 100%;
+                 height: 100%;
                 }
                 </style>
               <body>
@@ -71,7 +137,7 @@ fun getHtmlYoutube(bridgeName: String, videoId: String, height:String): String {
             
                   function onYouTubeIframeAPIReady() {
                     player = new YT.Player('player', {
-                      height: '${height}',
+                      height: '100%',
                       width: '100%',
                       videoId: '${videoId}',
                       events: {
@@ -82,7 +148,7 @@ fun getHtmlYoutube(bridgeName: String, videoId: String, height:String): String {
                   }
             
                   function onPlayerReady(event) {
-                    // 플레이어가 준비되었을 때 초기 작업을 여기에 추가할 수 있습니다.
+                    
                   }
             
                   function onPlayerStateChange(event) {
@@ -94,7 +160,8 @@ fun getHtmlYoutube(bridgeName: String, videoId: String, height:String): String {
                   }
             
                   function startUpdatingTime() {
-                    timeUpdater = setInterval(updateCurrentTime, 100); // 0.1초마다 현재 재생 시간을 업데이트
+                    updateCurrentTime();
+                    timeUpdater = setInterval(updateCurrentTime, 1000); // 1초마다 현재 재생 시간을 업데이트
                   }
             
                   function stopUpdatingTime() {
@@ -108,4 +175,5 @@ fun getHtmlYoutube(bridgeName: String, videoId: String, height:String): String {
                 </script>
               </body>
             </html>
-    """.trimIndent()}
+    """.trimIndent()
+}

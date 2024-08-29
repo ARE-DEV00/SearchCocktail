@@ -79,10 +79,13 @@ dependencies {
 
     implementation(project(":data:remote-api-cocktail"))
     implementation(project(":data:remote-api-stream-text"))
+    implementation(project(":data:local-room-cocktail"))
 
     implementation(project(":domain"))
     implementation(project(":feature:search"))
     implementation(project(":feature:stream-text"))
+    implementation(project(":feature:detail"))
+    implementation(project(":feature:favorite"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

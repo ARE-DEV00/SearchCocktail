@@ -10,4 +10,5 @@ interface ApiCocktailRepository {
 
     suspend fun getListAllCocktailByFirstLetter(firstLetter:String): Flow<ResultData<List<DrinkInfoEntity>>>
 
+    suspend fun getCocktailById(id: String): Flow<ResultData<DrinkInfoEntity?>>
 }
