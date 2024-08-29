@@ -1,3 +1,6 @@
+import java.util.Properties
+import java.io.FileInputStream
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
@@ -6,6 +9,10 @@ plugins {
     alias(libs.plugins.compose.compiler)
 
 }
+
+val localPropertiesFile = rootProject.file("local.properties")
+val localProperties = Properties()
+localProperties.load(FileInputStream(localPropertiesFile))
 
 val versionMajor = 1 // 0~9
 val versionMinor = 0 // 0~99
@@ -43,13 +50,24 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+
+    signingConfigs {
+        create("config") {
+            keyAlias = localProperties["KEY_ALIAS"] as String
+            keyPassword = localProperties["KEY_PASSWORD"] as String
+            storeFile = file(localProperties["STORE_FILE"] as String)
+            storePassword = localProperties["STROE_PASSWORD"] as String
+        }
+    }
+
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("config")
         }
     }
 

@@ -19,3 +19,28 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+-keep class kr.co.are.searchcocktail.data.localroomcocktail.model.** {*;}
+-keep class kr.co.are.searchcocktail.data.remoteapicocktail.model.** {*;}
+-keep class kr.co.are.searchcocktail.data.remoteapistreamtext.model.** {*;}
+-keep class kr.co.are.searchcocktail.data.localroomcocktail.entity.** {*;}
+-keep class kr.co.are.searchcocktail.domain.entity.** {*;}
+
+-keep class com.squareup.moshi.kotlin.reflect.** { *; }
+
+-keepclasseswithmembers class * {
+    @com.squareup.moshi.* <methods>;
+}
+
+-keep @com.squareup.moshi.JsonQualifier interface *
+
+-keepclassmembers @com.squareup.moshi.JsonClass class * extends java.lang.Enum {
+    <fields>;
+}
+
+-keepnames @com.squareup.moshi.JsonClass class *
+
+-keepclasseswithmembers class **.*JsonAdapter extends com.squareup.moshi.JsonAdapter {
+	<init>(...);
+	<fields>;
+}
