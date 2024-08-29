@@ -1,6 +1,8 @@
 package kr.co.are.searchcocktail.feature.search.component
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,14 +24,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import kr.co.are.searchcocktail.domain.entity.drink.DrinkInfoEntity
+import timber.log.Timber
 
 @Composable
 fun SearchCocktailListView(
+    searchQuery: String,
     itemList: List<DrinkInfoEntity>,
     onTabFavorite: (drinkInfo: DrinkInfoEntity) -> Unit,
     onTabItem: (drinkInfo: DrinkInfoEntity) -> Unit
@@ -64,10 +69,9 @@ fun SearchCocktailListView(
                         .weight(1f)
                         .padding(end = 8.dp)
                 ) {
-                    Text(
+                    HighlightText(
                         text = drinkInfo.name ?: "",
-                        fontWeight = FontWeight.Bold,
-                        color = Color.Black
+                        highlight = searchQuery
                     )
                     Text(
                         text = drinkInfo.category ?: "",
@@ -90,6 +94,41 @@ fun SearchCocktailListView(
                         tint = if (isFavorite) Color.Red else Color.Gray
                     )
                 }
+            }
+        }
+    }
+
+}
+
+@Composable
+fun HighlightText(
+    text: String,
+    highlight: String
+) {
+    if (highlight.isEmpty() || !text.contains(highlight)) {
+        Text(text = text)
+        return
+    }
+
+    Row {
+        val regex = "(?<=($highlight))|(?=($highlight))".toRegex()
+        val parts = text.split(regex)
+
+        parts.forEach { part ->
+            if (part == highlight) {
+                Box(
+                    modifier = Modifier
+                        .background(Color(0xFFADD8E6))
+                ) {
+                    Text(
+                        text = part,
+                        fontWeight = FontWeight.Bold,
+                    )
+                }
+            } else {
+                Text(
+                    text = part
+                )
             }
         }
     }

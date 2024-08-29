@@ -109,6 +109,7 @@ fun SearchScreen(
                     } else {
                         if (uiState.drinks.isNotEmpty()) {
                             SearchCocktailListView(
+                                searchQuery = searchQuery,
                                 itemList = uiState.drinks,
                                 onTabFavorite = { id ->
                                     Timber.d("onTabFavorite:$id")
