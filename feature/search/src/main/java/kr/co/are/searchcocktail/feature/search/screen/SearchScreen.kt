@@ -10,13 +10,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,7 +25,6 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import kr.co.are.searchcocktail.domain.entity.drink.DrinkInfoEntity
 import kr.co.are.searchcocktail.feature.search.component.DefaultCocktailListView
 import kr.co.are.searchcocktail.feature.search.component.SearchCocktailListView
 import kr.co.are.searchcocktail.feature.search.component.SearchTextField
@@ -42,6 +40,13 @@ fun SearchScreen(
     val focusManager = LocalFocusManager.current
     val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
     val searchUiState by viewModel.searchUiState.collectAsStateWithLifecycle()
+
+    SideEffect {
+        if (searchUiState is SearchUiState.Success) {
+            val uiState = searchUiState as SearchUiState.Success
+            viewModel.syncFavorite(uiState.drinks, uiState.isDefault)
+        }
+    }
 
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
