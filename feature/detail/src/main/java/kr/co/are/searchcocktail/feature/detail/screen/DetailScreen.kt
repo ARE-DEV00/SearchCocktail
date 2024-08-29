@@ -35,11 +35,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import kr.co.are.searchcocktail.core.navigation.component.AppHeaderScreen
 import kr.co.are.searchcocktail.domain.entity.drink.DrinkInfoEntity
 import kr.co.are.searchcocktail.feature.detail.model.DetailUiState
@@ -73,7 +75,7 @@ fun DetailScreen(
                 is DetailUiState.Loading -> DetailLoading()
                 is DetailUiState.Error -> DetailError()
                 is DetailUiState.Success -> {
-                    DetailSuccess(uiState)
+                    DetailInfo(uiState)
                 }
             }
             FloatingActionButton(
@@ -119,7 +121,7 @@ private fun DetailError() {
 }
 
 @Composable
-private fun DetailSuccess(
+private fun DetailInfo(
     uiState: DetailUiState.Success,
     viewModel: DetailViewModel = hiltViewModel()
 ) {
@@ -143,11 +145,13 @@ private fun DetailSuccess(
         ) {
             // 칵테일 이미지
             AsyncImage(
-                model = drinkInfo.thumbUrl,
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(drinkInfo.thumbUrl)
+                    .crossfade(true)
+                    .build(),
                 contentDescription = drinkInfo.name,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(200.dp)
                     .clip(RoundedCornerShape(16.dp)),
                 contentScale = ContentScale.Crop
             )

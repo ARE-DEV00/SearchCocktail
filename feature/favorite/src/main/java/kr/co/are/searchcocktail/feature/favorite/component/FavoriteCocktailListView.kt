@@ -17,8 +17,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import kr.co.are.searchcocktail.domain.entity.drink.DrinkInfoEntity
 
 @Composable
@@ -37,7 +39,10 @@ fun FavoriteCocktailListView(
                 modifier = Modifier.clickable { onTabImage(drinkInfo) },
             ) {
                 AsyncImage(
-                    model = itemList[item].thumbUrl,
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(drinkInfo.thumbUrl)
+                        .crossfade(true)
+                        .build(),
                     contentDescription = null,
                     modifier = Modifier
                         .fillMaxSize()
@@ -45,7 +50,7 @@ fun FavoriteCocktailListView(
                     contentScale = ContentScale.Crop,
                 )
 
-                if (itemList[item].isFavorite) {
+                if (drinkInfo.isFavorite) {
                     Icon(
                         imageVector = Icons.Default.Favorite,
                         contentDescription = null,
@@ -57,17 +62,15 @@ fun FavoriteCocktailListView(
                     )
                 }
 
-                if (itemList[item].name != null) {
+                if (drinkInfo.name != null) {
                     Text(
-                        text = itemList[item].name!!,
+                        text = drinkInfo.name!!,
                         modifier = Modifier
                             .align(Alignment.BottomStart)
                             .padding(5.dp),
                         color = Color.White
                     )
-
                 }
-
             }
         }
     }
