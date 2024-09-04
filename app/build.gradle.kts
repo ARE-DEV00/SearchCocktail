@@ -36,7 +36,9 @@ android {
         versionCode = versionCodeFinal
         versionName = versionNameFinal
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "kr.co.are.searchcocktail.SearchCocktailTestRunner"
+        testInstrumentationRunnerArguments += mapOf("clearPackageData" to "true")
+
         vectorDrawables {
             useSupportLibrary = true
         }
@@ -117,8 +119,9 @@ dependencies {
     //Hilt
     implementation(libs.hilt.android)
     implementation(libs.androidx.navigation.runtime.ktx)
-    ksp(libs.hilt.android.compiler)
     implementation(libs.hilt.navigation.compose)
+    ksp(libs.hilt.android.compiler)
+
 
     //Navigation
     implementation(libs.navigation.compose)
@@ -141,4 +144,13 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    testImplementation(libs.hilt.android.testing)
+    kspTest(libs.hilt.android.compiler)
+
+
+    androidTestImplementation(libs.hilt.android.testing)
+    kspAndroidTest(libs.hilt.android.compiler)
+
+
 }
