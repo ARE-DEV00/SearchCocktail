@@ -28,7 +28,10 @@ class ApiInstrumentedTest {
 
     @Inject
     lateinit var getStreamTextByIdUseCase: GetStreamTextByIdUseCase
-    
+
+    @Inject
+    lateinit var getListCocktailFilterByAlcoholicUseCase: GetListCocktailFilterByAlcoholicUseCase
+
     @Before
     fun setup() {
         hiltRule.inject()
@@ -38,7 +41,6 @@ class ApiInstrumentedTest {
     fun testApiStreamTextGetData() = runTest {
         getStreamTextByIdUseCase()
             .catch {
-                println("##### testApiServiceFetchData - catch")
                 it.printStackTrace()
                 fail("An error occurred: ${it.message}")
             }.collectLatest { result ->
@@ -56,5 +58,24 @@ class ApiInstrumentedTest {
             }
     }
 
+    @Test
+    fun testApiCocktailGetData() = runTest {
+        getListCocktailFilterByAlcoholicUseCase()
+            .catch {
+                it.printStackTrace()
+                fail("An error occurred: ${it.message}")
+            }.collectLatest { result ->
+                when(result){
+                    is ResultDomain.Error -> {
+                        fail("An error occurred: ${result.exception.message}")
+                    }
+                    ResultDomain.Loading -> {
 
+                    }
+                    is ResultDomain.Success -> {
+                        MatcherAssert.assertThat(result, org.hamcrest.CoreMatchers.notNullValue())
+                    }
+                }
+            }
+    }
 }
