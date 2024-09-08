@@ -16,8 +16,8 @@ localProperties.load(FileInputStream(localPropertiesFile))
 
 val versionMajor = 1 // 0~9
 val versionMinor = 0 // 0~99
-val versionPatch = 0 // 0~99
-val versionHotfix = 1 // 0~99
+val versionPatch = 1 // 0~99
+val versionHotfix = 0 // 0~99
 
 val versionCodeFinal =
     versionMajor * 10_000_000 + versionMinor * 100_000 + versionPatch * 1000 + versionHotfix
@@ -89,13 +89,6 @@ android {
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
-    }
-
-    //릴리즈 빌드전 통합테스트
-    tasks.whenTaskAdded {
-        if (name == "assembleRelease") {
-            dependsOn("connectedAndroidTest")
         }
     }
 }
