@@ -14,6 +14,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -33,6 +36,8 @@ fun StreamTextScreen(
     onTabBack: () -> Unit
 ) {
     val streamTextUiState by viewModel.streamTextUiState.collectAsStateWithLifecycle()
+    var movePlayTime: ((Float) -> Unit)? by remember { mutableStateOf(null) } // 재생 시간 변경 함수 저장
+
 
     AppHeaderScreen(
         headerTitle = if (streamTextUiState is StreamTextUiState.Success) {
@@ -65,6 +70,9 @@ fun StreamTextScreen(
                         videoUrl = uiState.streamTextInfo?.videoUrl ?: "",
                         onPlayTimeUpdated = { time ->
                             viewModel.updatePlayTime(time)
+                        },
+                        onSetPlayTime = { setPlayTime ->
+                            movePlayTime = setPlayTime
                         }
                     )
                     TextParagraphLayout {
@@ -121,6 +129,7 @@ fun StreamTextScreen(
                                                 isHighlighted = isHighlighted,
                                                 onTabText = { startTime, endTime ->
                                                     Timber.d("#### onTabText-:${startTime}-${endTime}")
+                                                    movePlayTime?.invoke(startTime.toFloat())
                                                 }
                                             )
                                         }

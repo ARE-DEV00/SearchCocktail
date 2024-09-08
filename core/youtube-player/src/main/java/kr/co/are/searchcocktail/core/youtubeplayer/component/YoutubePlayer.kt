@@ -28,6 +28,7 @@ fun YoutubePlayer(
     bridgeName: String,
     videoUrl: String,
     onPlayTimeUpdated: (Float) -> Unit,
+    onSetPlayTime: (setPlayTime: (Float) -> Unit) -> Unit
 ) {
     val activity = LocalView.current.context as Activity
 
@@ -72,6 +73,13 @@ fun YoutubePlayer(
             addJavascriptInterface(WebViewYoutubePlayerBridge(onPlayTimeUpdated), bridgeName)
         }
     }
+
+    // setPlayTime 함수를 내부에서 생성 후 외부로 전달
+    val setPlayerTime: (Float) -> Unit = { time ->
+        webView.evaluateJavascript("setPlayTime($time);", null)
+    }
+
+    onSetPlayTime(setPlayerTime)
 
     extractYouTubeId(videoUrl)?.let { videoId ->
         val htmlData = getHtmlYoutube(bridgeName, videoId)
@@ -172,6 +180,14 @@ fun getHtmlYoutube(bridgeName: String, videoId: String): String {
                     var currentTime = player.getCurrentTime();
                     ${bridgeName}.onUpdatedPlayTime(currentTime);
                   }
+                  
+                  function setPlayTime(time) {
+                    if (player != null) {
+                      player.seekTo(time, true);
+                      updateCurrentTime();//시간 변경 후 현재 시간 업데이트
+                    }
+                  }
+                  
                 </script>
               </body>
             </html>
