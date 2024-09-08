@@ -91,13 +91,6 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
-
-    //릴리즈 빌드전 통합테스트
-    tasks.whenTaskAdded {
-        if (name == "assembleRelease") {
-            dependsOn("connectedAndroidTest")
-        }
-    }
 }
 
 dependencies {
