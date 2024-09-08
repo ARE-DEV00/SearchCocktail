@@ -110,8 +110,7 @@ fun StreamTextScreen(
                                         }
 
                                         is ParagraphChildEntity.KaraokeEntity -> {
-                                            Timber.d("#### Play: ${uiState.playTime}: ${it.s}-${it.e}")
-
+                                            //Timber.d("#### Play: ${uiState.playTime}: ${it.s}-${it.e}")
                                             val startTime = it.s
                                             val endTime = it.e
                                             val currentMinute = (uiState.playTime / 60).toInt()
@@ -120,9 +119,7 @@ fun StreamTextScreen(
 
                                             val isHighlighted = currentMinute in startMinute..endMinute
                                             //val isHighlighted = uiState.playTime >= it.s && uiState.playTime <= it.e
-
-
-                                            Timber.d("#### currentMinute: ${currentMinute} / startMinute: ${startMinute} / endMinute: ${endMinute} / isHighlighted: ${isHighlighted}")
+                                            //Timber.d("#### currentMinute: ${currentMinute} / startMinute: ${startMinute} / endMinute: ${endMinute} / isHighlighted: ${isHighlighted}")
 
                                             KaraokeText(
                                                 it,

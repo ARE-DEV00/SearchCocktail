@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -74,12 +75,14 @@ fun YoutubePlayer(
         }
     }
 
-    // setPlayTime 함수를 내부에서 생성 후 외부로 전달
-    val setPlayerTime: (Float) -> Unit = { time ->
-        webView.evaluateJavascript("setPlayTime($time);", null)
-    }
+    LaunchedEffect(key1 = Unit) {
+        // setPlayTime 함수를 내부에서 생성 후 외부로 전달
+        val setPlayerTime: (Float) -> Unit = { time ->
+            webView.evaluateJavascript("setPlayTime($time);", null)
+        }
 
-    onSetPlayTime(setPlayerTime)
+        onSetPlayTime(setPlayerTime)
+    }
 
     extractYouTubeId(videoUrl)?.let { videoId ->
         val htmlData = getHtmlYoutube(bridgeName, videoId)
@@ -104,7 +107,7 @@ fun YoutubePlayer(
 fun extractYouTubeId(url: String): String? {
     if (url.contains("v=")) {
         val split = url.split("v=")
-        Timber.d("#### split : ${split[1]}")
+        //Timber.d("#### split : ${split[1]}")
         return split[1]
     }
     return null
