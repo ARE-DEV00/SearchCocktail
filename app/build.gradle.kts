@@ -7,7 +7,7 @@ plugins {
     alias(libs.plugins.hilt.android)
     alias(libs.plugins.ksp)
     alias(libs.plugins.compose.compiler)
-
+    alias(libs.plugins.google.services)
 }
 
 val localPropertiesFile = rootProject.file("local.properties")
@@ -143,6 +143,10 @@ dependencies {
 
     //Logger
     implementation(libs.timber)
+
+    //Firebase
+    implementation(platform(libs.firebase.bom))       // Firebase BOM 추가
+    implementation(libs.firebase.analytics)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
