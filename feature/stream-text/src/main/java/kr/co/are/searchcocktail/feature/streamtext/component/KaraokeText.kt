@@ -21,7 +21,7 @@ fun KaraokeText(
     Box(
         modifier = Modifier
             .background(if (isHighlighted) Color(0xFFADD8E6) else Color.Transparent)
-            .padding(4.dp)
+            .padding(1.dp)
             .clickable {
                 onTabText?.invoke(child.s, child.e)
             }

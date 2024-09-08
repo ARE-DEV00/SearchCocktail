@@ -14,6 +14,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -33,6 +36,8 @@ fun StreamTextScreen(
     onTabBack: () -> Unit
 ) {
     val streamTextUiState by viewModel.streamTextUiState.collectAsStateWithLifecycle()
+    var movePlayTime: ((Float) -> Unit)? by remember { mutableStateOf(null) } // 재생 시간 변경 함수 저장
+
 
     AppHeaderScreen(
         headerTitle = if (streamTextUiState is StreamTextUiState.Success) {
@@ -65,6 +70,9 @@ fun StreamTextScreen(
                         videoUrl = uiState.streamTextInfo?.videoUrl ?: "",
                         onPlayTimeUpdated = { time ->
                             viewModel.updatePlayTime(time)
+                        },
+                        onSetPlayTime = { setPlayTime ->
+                            movePlayTime = setPlayTime
                         }
                     )
                     TextParagraphLayout {
@@ -102,8 +110,7 @@ fun StreamTextScreen(
                                         }
 
                                         is ParagraphChildEntity.KaraokeEntity -> {
-                                            Timber.d("#### Play: ${uiState.playTime}: ${it.s}-${it.e}")
-
+                                            //Timber.d("#### Play: ${uiState.playTime}: ${it.s}-${it.e}")
                                             val startTime = it.s
                                             val endTime = it.e
                                             val currentMinute = (uiState.playTime / 60).toInt()
@@ -112,15 +119,14 @@ fun StreamTextScreen(
 
                                             val isHighlighted = currentMinute in startMinute..endMinute
                                             //val isHighlighted = uiState.playTime >= it.s && uiState.playTime <= it.e
-
-
-                                            Timber.d("#### currentMinute: ${currentMinute} / startMinute: ${startMinute} / endMinute: ${endMinute} / isHighlighted: ${isHighlighted}")
+                                            //Timber.d("#### currentMinute: ${currentMinute} / startMinute: ${startMinute} / endMinute: ${endMinute} / isHighlighted: ${isHighlighted}")
 
                                             KaraokeText(
                                                 it,
                                                 isHighlighted = isHighlighted,
                                                 onTabText = { startTime, endTime ->
                                                     Timber.d("#### onTabText-:${startTime}-${endTime}")
+                                                    movePlayTime?.invoke(startTime.toFloat())
                                                 }
                                             )
                                         }
