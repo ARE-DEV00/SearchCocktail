@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.Icon
@@ -125,7 +126,7 @@ fun AppHeader(
 fun AppHeaderPreview() {
     AppHeader(
         headerTitle = "TEST",
-        leftIconImageVector = Icons.Default.ArrowBack,
+        leftIconImageVector = Icons.AutoMirrored.Filled.ArrowBack,
         leftIconImageVectorColor = Color.Black,
         rightIconImageVector = Icons.Default.Favorite,
         rightIconImageVectorColor = Color.Red

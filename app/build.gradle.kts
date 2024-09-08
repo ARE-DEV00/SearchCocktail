@@ -7,7 +7,7 @@ plugins {
     alias(libs.plugins.hilt.android)
     alias(libs.plugins.ksp)
     alias(libs.plugins.compose.compiler)
-
+    alias(libs.plugins.google.services)
 }
 
 val localPropertiesFile = rootProject.file("local.properties")
@@ -16,8 +16,8 @@ localProperties.load(FileInputStream(localPropertiesFile))
 
 val versionMajor = 1 // 0~9
 val versionMinor = 0 // 0~99
-val versionPatch = 0 // 0~99
-val versionHotfix = 1 // 0~99
+val versionPatch = 1 // 0~99
+val versionHotfix = 0 // 0~99
 
 val versionCodeFinal =
     versionMajor * 10_000_000 + versionMinor * 100_000 + versionPatch * 1000 + versionHotfix
@@ -36,7 +36,9 @@ android {
         versionCode = versionCodeFinal
         versionName = versionNameFinal
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "kr.co.are.searchcocktail.SearchCocktailTestRunner"
+        testInstrumentationRunnerArguments += mapOf("clearPackageData" to "true")
+
         vectorDrawables {
             useSupportLibrary = true
         }
@@ -117,8 +119,9 @@ dependencies {
     //Hilt
     implementation(libs.hilt.android)
     implementation(libs.androidx.navigation.runtime.ktx)
-    ksp(libs.hilt.android.compiler)
     implementation(libs.hilt.navigation.compose)
+    ksp(libs.hilt.android.compiler)
+
 
     //Navigation
     implementation(libs.navigation.compose)
@@ -134,6 +137,10 @@ dependencies {
     //Logger
     implementation(libs.timber)
 
+    //Firebase
+    implementation(platform(libs.firebase.bom))       // Firebase BOM 추가
+    implementation(libs.firebase.analytics)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -141,4 +148,13 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    testImplementation(libs.hilt.android.testing)
+    kspTest(libs.hilt.android.compiler)
+
+
+    androidTestImplementation(libs.hilt.android.testing)
+    kspAndroidTest(libs.hilt.android.compiler)
+
+
 }

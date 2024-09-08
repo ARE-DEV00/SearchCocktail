@@ -59,7 +59,6 @@ class StreamTextViewModel @Inject constructor(
     }
 
     fun updatePlayTime(time: Float) {
-        Timber.d("#### updatePlayTime-${time}")
         viewModelScope.launch(Dispatchers.IO) {
             _streamTextUiState.value = StreamTextUiState.Success(streamTextInfoEntity, time)
         }

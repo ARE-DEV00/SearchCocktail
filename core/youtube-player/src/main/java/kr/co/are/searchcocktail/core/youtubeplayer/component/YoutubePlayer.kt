@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -28,6 +29,7 @@ fun YoutubePlayer(
     bridgeName: String,
     videoUrl: String,
     onPlayTimeUpdated: (Float) -> Unit,
+    onSetPlayTime: (setPlayTime: (Float) -> Unit) -> Unit
 ) {
     val activity = LocalView.current.context as Activity
 
@@ -73,6 +75,15 @@ fun YoutubePlayer(
         }
     }
 
+    LaunchedEffect(key1 = Unit) {
+        // setPlayTime 함수를 내부에서 생성 후 외부로 전달
+        val setPlayerTime: (Float) -> Unit = { time ->
+            webView.evaluateJavascript("setPlayTime($time);", null)
+        }
+
+        onSetPlayTime(setPlayerTime)
+    }
+
     extractYouTubeId(videoUrl)?.let { videoId ->
         val htmlData = getHtmlYoutube(bridgeName, videoId)
         Box(modifier = modifier.fillMaxWidth()) {
@@ -96,7 +107,7 @@ fun YoutubePlayer(
 fun extractYouTubeId(url: String): String? {
     if (url.contains("v=")) {
         val split = url.split("v=")
-        Timber.d("#### split : ${split[1]}")
+        //Timber.d("#### split : ${split[1]}")
         return split[1]
     }
     return null
@@ -172,6 +183,14 @@ fun getHtmlYoutube(bridgeName: String, videoId: String): String {
                     var currentTime = player.getCurrentTime();
                     ${bridgeName}.onUpdatedPlayTime(currentTime);
                   }
+                  
+                  function setPlayTime(time) {
+                    if (player != null) {
+                      player.seekTo(time, true);
+                      updateCurrentTime();//시간 변경 후 현재 시간 업데이트
+                    }
+                  }
+                  
                 </script>
               </body>
             </html>
